@@ -1,0 +1,24 @@
+[project]
+name = "analytic-system"
+version = "0.1.0"
+description = "Analytic System for online shop"
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "MIT" }
+authors = [{ name = "1R0N3k" }]
+
+dependencies = [
+    "django>=6.0.7",
+    "pandas>=3.0.3",
+    "pydantic>=2.13.4",
+    "streamlit>=1.59.2",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.22",
+]
