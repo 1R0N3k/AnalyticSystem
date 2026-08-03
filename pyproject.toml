@@ -9,6 +9,7 @@ authors = [{ name = "1R0N3k" }]
 
 dependencies = [
     "django>=6.0.7",
+    "dotenv>=0.9.9",
     "pandas>=3.0.3",
     "pydantic>=2.13.4",
     "streamlit>=1.59.2",
