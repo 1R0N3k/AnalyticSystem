@@ -1,7 +1,6 @@
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
-from django.utils import timezone
 
 from faker import Faker
 
