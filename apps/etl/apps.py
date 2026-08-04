@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class EtlConfig(AppConfig):
-    name = 'apps.etl'
+    name = 'etl'

@@ -44,11 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'analytics.apps.AnalyticsConfig',
-    'catalog.apps.CatalogConfig',
-    'customers.apps.CustomersConfig',
-    'etl.apps.EtlConfig',
-    'orders.apps.OrdersConfig',
+    'analytics',
+    'catalog',
+    'customers',
+    'etl',
+    'orders',
 ]
 
 MIDDLEWARE = [

@@ -1,6 +1,7 @@
 import random
 from datetime import datetime
 from decimal import Decimal
+from django.utils import timezone
 
 from faker import Faker
 
@@ -94,8 +95,8 @@ def generate_mock_orders(count: int = 1000) -> list[RawOrder]:
     weights = list(STATUS_WEIGHTS.values())
     
     for _ in range(count):
-        created_at = fake.date_time_between(start_date='-1y', end_date='now')
-        
+        created_at = fake.date_time_between(start_date='-1y', end_date='now', tzinfo=timezone.utc)
+
         items_count = random.randint(1, 5)
         items_list = _generate_order_items(items_count)
         
