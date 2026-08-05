@@ -1,0 +1,48 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="Аналитика продаж",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+st.title("Аналитика продаж интернет-магазина")
+
+st.markdown("""
+### Добро пожаловать в систему аналитики!
+
+Этот дашборд предоставляет интерактивную визуализацию данных о продажах интернет-магазина.
+
+**Используйте боковое меню для навигации:**
+
+-**Выручка** — анализ динамики выручки по дням с фильтрами по датам
+-**Топ товаров** — рейтинг самых продаваемых товаров по выручке
+-**Клиенты** — географическое распределение заказов по городам
+
+---
+
+**Технологии:**
+- Backend: Django + PostgreSQL
+- API: REST (JSON)
+- Frontend: Streamlit + Plotly
+""")
+
+with st.sidebar:
+    st.header("ℹО системе")
+    st.markdown("""
+    - **Источник данных:** PostgreSQL
+    - **Количество заказов:** ~10 000
+    - **Период:** последний год
+    - **Обновление:** в реальном времени
+    """)
+    
+    st.divider()
+    
+    st.header("API Endpoints")
+    st.code("""
+    /analytics/api/revenue/
+    /analytics/api/top-products/
+    /analytics/api/average-check/
+    /analytics/api/customers-by-city/
+    """, language="text")
