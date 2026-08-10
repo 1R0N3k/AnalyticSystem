@@ -1,5 +1,6 @@
 import streamlit as st
 
+st.set_page_config(layout="wide")
 st.set_page_config(
     page_title="Аналитика продаж",
     page_icon="📊",
@@ -38,11 +39,3 @@ with st.sidebar:
     """)
     
     st.divider()
-    
-    st.header("API Endpoints")
-    st.code("""
-    /analytics/api/revenue/
-    /analytics/api/top-products/
-    /analytics/api/average-check/
-    /analytics/api/customers-by-city/
-    """, language="text")

@@ -1,0 +1,12 @@
+#:tombi schema.strict = false
+
+[client]
+toolbarMode = "developer"  # заменить на viewer
+
+[theme]
+base = "light"
+primaryColor = "#1771F1"
+backgroundColor = "#F2F8FD"
+font = "cool-font, fallback-cool-font, sans-serif"
+baseFontSize = 18
+showSidebarBorder = true
