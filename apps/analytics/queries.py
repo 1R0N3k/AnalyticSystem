@@ -1,6 +1,6 @@
 from datetime import date, timedelta
-from django.db.models import Sum, Count, Avg, F, Window
-from django.db.models.functions import ExtractHour, ExtractWeekDay, TruncDay, TruncMonth, RowNumber 
+from django.db.models import Sum, Count, Avg, Max, Value, F, Window
+from django.db.models.functions import ExtractHour, ExtractWeekDay, TruncDay, TruncMonth, RowNumber, Concat
 from orders.models import Order, OrderItem
 from customers.models import Customer
 
@@ -108,5 +108,12 @@ def get_revenue_by_month():
     ).order_by('month')
 
 
-def get_top_customers():
-    ...
+def get_top_customers(limit: int = 100):
+    return Customer.objects.filter(
+        orders__status__in=['paid', 'delivered']
+    ).annotate(
+        full_name=Concat('name', Value(' '), 'surname'),
+        total_spent=Sum('orders__due'),
+        order_count=Count('orders', distinct=True),
+        last_order_date=Max('orders__created_at')
+    ).order_by('-total_spent')[:limit]

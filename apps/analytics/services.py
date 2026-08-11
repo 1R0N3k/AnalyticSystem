@@ -1,6 +1,6 @@
 from datetime import date, datetime, timedelta
 from . import queries
-from .schemas import MarginDataPoint, MarginSummary, ABCProduct, FunnelStage, TimeDataPoint
+from .schemas import MarginDataPoint, MarginSummary, ABCProduct, FunnelStage, TimeDataPoint, TopCustomer
 from orders.models import Order, OrderItem
 
 
@@ -208,5 +208,24 @@ def get_revenue_by_month() -> list[TimeDataPoint]:
     
     result.sort(key=lambda x: next((item['month'] for item in qs 
                                     if f'{month_names.get(item["month"].month, "")} {item["month"].year}' == x.period), None))
+    
+    return result
+
+
+def get_top_customers_data(limit: int = 100) -> list[TopCustomer]:
+    qs = queries.get_top_customers(limit)
+    
+    result = []
+    for item in qs:
+        last_date = item.last_order_date.date() if item.last_order_date else None
+        
+        result.append(TopCustomer(
+            full_name=item.full_name,
+            email=item.email,
+            city=item.city,
+            total_spent=float(item.total_spent or 0),
+            order_count=item.order_count or 0,
+            last_order_date=last_date
+        ))
     
     return result

@@ -30,3 +30,11 @@ class TimeDataPoint(BaseModel):
     period: str
     revenue: float
     order_count: int
+
+class TopCustomer(BaseModel):
+    full_name: str    
+    email: str            
+    city: str             
+    total_spent: float    
+    order_count: int      
+    last_order_date: date 
