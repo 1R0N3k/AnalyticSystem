@@ -56,6 +56,11 @@ class OrderItem(models.Model):
         decimal_places=2,
         help_text='Цена на момент покупки'
     )
+    cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2, 
+        help_text='Себестоимость на момент покупки'
+    )
 
     class Meta:
         verbose_name = 'Позиция заказа'

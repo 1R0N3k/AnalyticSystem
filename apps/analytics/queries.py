@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from django.db.models import Sum, Count, Avg, F
 from django.db.models.functions import TruncDay
 
@@ -16,7 +16,6 @@ def get_revenue_by_period(start_date: date, end_date: date):
         revenue=Sum('due')
     ).order_by('day')
 
-
 def get_top_products(limit: int = 10):
     return OrderItem.objects.filter(
         order__status__in=['paid', 'delivered']
@@ -27,7 +26,6 @@ def get_top_products(limit: int = 10):
         total_quantity=Sum('quantity')
     ).order_by('-total_revenue')[:limit]
 
-
 def get_average_check(start_date: date, end_date: date):
     result = Order.objects.filter(
         created_at__date__range=[start_date, end_date],
@@ -37,9 +35,48 @@ def get_average_check(start_date: date, end_date: date):
     )
     return result['avg_check'] or 0.0
 
-
 def get_customers_by_city():
     return Customer.objects.values('city').annotate(
         total_customers=Count('id', distinct=True),
         total_orders=Count('orders', distinct=True)
     ).order_by('-total_orders')
+
+
+def get_margin_summary(start_date: date, end_date: date):
+    return OrderItem.objects.filter(
+        order__created_at__date__range=[start_date, end_date],
+        order__status__in=['paid', 'delivered']
+    ).aggregate(
+        total_revenue=Sum(F('price') * F('quantity')),
+        total_cost=Sum(F('cost') * F('quantity')),
+    )
+   
+def get_margin_by_day(start_date: date, end_date: date) -> list[MarginDataPoint]:
+    return OrderItem.objects.filter(
+        order__created_at__date__range=[start_date, end_date],
+        order__status__in=['paid', 'delivered']
+    ).annotate(
+        day=TruncDay('order__created_at')
+    ).values('day').annotate(
+        revenue=Sum(F('price') * F('quantity')),
+        cost=Sum(F('cost') * F('quantity'))
+    ).order_by('day')
+
+
+def get_abc_analysis():
+    ...
+
+
+def get_order_funnel():
+    ...
+
+
+def get_revenue_by_day_of_week():
+    ...
+
+def get_revenue_by_hour():
+    ...
+
+
+def get_top_customers():
+    ...

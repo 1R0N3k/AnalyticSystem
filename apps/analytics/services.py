@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 from . import queries
+from .schemas import MarginDataPoint, MarginSummary, ABCProduct
 
 
 def get_revenue_data(start_date: date, end_date: date) -> list[dict]:
@@ -40,3 +41,43 @@ def get_customers_by_city_data() -> list[dict]:
         }
         for item in qs
     ]
+
+
+def get_margin_by_day(start_date: date, end_date: date) -> list[MarginDataPoint]:
+    qs = queries.get_margin_by_day(start_date, end_date)
+
+    result = []
+    for item in qs:
+        revenue = float(item['revenue'] or 0)
+        cost = float(item['cost'] or 0)
+
+        margin=revenue - cost
+        margin_percent = (margin / revenue * 100) if revenue > 0 else 0
+
+        result.append(
+            MarginDataPoint(
+                day=item['day'],
+                revenue=revenue,
+                cost=cost,
+                margin=margin,
+                margin_percent=margin_percent
+            )
+        )
+    return result
+
+
+def get_margin_summary() -> MarginSummary:
+    qs = queries.get_margin_summary(start_date, end_date)
+
+    total_revenue = float(raw_data['total_revenue'] or 0)
+    total_cost = float(raw_data['total_cost'] or 0)
+    
+    total_margin = total_revenue - total_cost
+    margin_percent = (total_margin / total_revenue * 100) if total_revenue > 0 else 0
+    
+    return MarginSummary(
+        total_revenue=total_revenue,
+        total_cost=total_cost,
+        total_margin=total_margin,
+        margin_percent=margin_percent
+    )

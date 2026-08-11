@@ -49,6 +49,7 @@ def load_order(raw_order: RawOrder) -> Order:
             product=product,
             quantity=item.quantity,
             price=item.price,
+            cost=item.cost
         ))
     
     OrderItem.objects.bulk_create(order_items)
