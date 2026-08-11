@@ -18,3 +18,10 @@ class ABCProduct(BaseModel):
     product_name: str
     revenue: float
     category: str
+    cumulative_percent: float
+
+class FunnelStage(BaseModel):
+    status_key: str       
+    status_name: str      
+    count: int            
+    conversion_rate: float 
