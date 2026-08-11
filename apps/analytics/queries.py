@@ -1,7 +1,6 @@
 from datetime import date, timedelta
 from django.db.models import Sum, Count, Avg, F, Window
-from django.db.models.functions import TruncDay, RowNumber
-
+from django.db.models.functions import ExtractHour, ExtractWeekDay, TruncDay, TruncMonth, RowNumber 
 from orders.models import Order, OrderItem
 from customers.models import Customer
 
@@ -76,12 +75,37 @@ def get_order_status_counts():
         count=Count('id')
     )
 
-
 def get_revenue_by_day_of_week():
-    ...
+    return Order.objects.filter(
+        status__in=['paid', 'delivered']
+    ).annotate(
+        day_of_week=ExtractWeekDay('created_at')
+    ).values('day_of_week').annotate(
+        revenue=Sum('due'),
+        order_count=Count('id')
+    ).order_by('day_of_week')
+
 
 def get_revenue_by_hour():
-    ...
+    return Order.objects.filter(
+        status__in=['paid', 'delivered']
+    ).annotate(
+        hour=ExtractHour('created_at')
+    ).values('hour').annotate(
+        revenue=Sum('due'),
+        order_count=Count('id')
+    ).order_by('hour')
+
+
+def get_revenue_by_month():
+    return Order.objects.filter(
+        status__in=['paid', 'delivered']
+    ).annotate(
+        month=TruncMonth('created_at')
+    ).values('month').annotate(
+        revenue=Sum('due'),
+        order_count=Count('id')
+    ).order_by('month')
 
 
 def get_top_customers():

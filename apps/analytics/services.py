@@ -1,6 +1,6 @@
 from datetime import date, datetime, timedelta
 from . import queries
-from .schemas import MarginDataPoint, MarginSummary, ABCProduct, FunnelStage
+from .schemas import MarginDataPoint, MarginSummary, ABCProduct, FunnelStage, TimeDataPoint
 from orders.models import Order, OrderItem
 
 
@@ -138,4 +138,75 @@ def get_funnel_data() -> list[FunnelStage]:
             conversion_rate=round(conversion_rate, 2)
         ))
         
+    return result
+
+
+def get_revenue_by_day_of_week() -> list[TimeDataPoint]:
+    qs = queries.get_revenue_by_day_of_week()
+    day_names = {
+        1: 'Воскресенье',
+        2: 'Понедельник',
+        3: 'Вторник',
+        4: 'Среда',
+        5: 'Четверг',
+        6: 'Пятница',
+        7: 'Суббота'
+    }
+    
+    result = []
+    for item in qs:
+        day_num = item['day_of_week']
+        result.append(TimeDataPoint(
+            period=day_names.get(day_num, f'День {day_num}'),
+            revenue=float(item['revenue'] or 0),
+            order_count=item['order_count'] or 0
+        ))
+    
+    order = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
+    result.sort(key=lambda x: order.index(x.period) if x.period in order else 999)
+    
+    return result
+
+
+def get_revenue_by_hour() -> list[TimeDataPoint]:
+    qs = queries.get_revenue_by_hour()
+    
+    result = []
+    for item in qs:
+        hour = item['hour']
+        result.append(TimeDataPoint(
+            period=f'{hour:02d}:00',
+            revenue=float(item['revenue'] or 0),
+            order_count=item['order_count'] or 0
+        ))
+
+    result.sort(key=lambda x: int(x.period.split(':')[0]))
+    
+    return result
+
+
+def get_revenue_by_month() -> list[TimeDataPoint]:
+    qs = queries.get_revenue_by_month()
+    
+    month_names = {
+        1: 'Январь', 2: 'Февраль', 3: 'Март', 4: 'Апрель',
+        5: 'Май', 6: 'Июнь', 7: 'Июль', 8: 'Август',
+        9: 'Сентябрь', 10: 'Октябрь', 11: 'Ноябрь', 12: 'Декабрь'
+    }
+    
+    result = []
+    for item in qs:
+        month_date = item['month'] 
+        month_num = month_date.month
+        year = month_date.year
+        
+        result.append(TimeDataPoint(
+            period=f'{month_names.get(month_num, "")} {year}',
+            revenue=float(item['revenue'] or 0),
+            order_count=item['order_count'] or 0
+        ))
+    
+    result.sort(key=lambda x: next((item['month'] for item in qs 
+                                    if f'{month_names.get(item["month"].month, "")} {item["month"].year}' == x.period), None))
+    
     return result
