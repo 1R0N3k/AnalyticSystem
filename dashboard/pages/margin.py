@@ -19,10 +19,18 @@ with col1:
 with col2:
     end_date = st.date_input("Дата окончания", value=date.today())
 
+@st.cache_data(ttl=600)
+def load_margin_summary_data(start_date: str, end_date: str):
+    return api_client.get_margin(start_date, end_date)
+
+@st.cache_data(ttl=600)
+def load_margin_by_day_data(start_date: str, end_date: str):
+    return api_client.get_margin_by_day(start_date, end_date)
+
 with st.spinner("Загрузка данных..."):
     try:
-        summary = api_client.get_margin(start_date.isoformat(), end_date.isoformat())
-        daily_data = api_client.get_margin_by_day(start_date.isoformat(), end_date.isoformat())
+        summary = load_margin_summary_data(start_date.isoformat(), end_date.isoformat())
+        daily_data = load_margin_by_day_data(start_date.isoformat(), end_date.isoformat())
         
         if not daily_data:
             st.warning("Нет данных за выбранный период")

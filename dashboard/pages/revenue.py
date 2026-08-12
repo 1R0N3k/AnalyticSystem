@@ -11,20 +11,6 @@ from services import api_client, download_converter
 st.set_page_config(layout="wide")
 st.title("Выручка по периодам")
 
-@st.cache_data(ttl=600)
-def load_revenue_data(start_date: st.date_input, end_date: st.date_input) -> list[dict]:
-    return api_client.get_revenue(
-        start_date=start_date.isoformat(),
-        end_date=end_date.isoformat()
-    )
-
-@st.cache_data(ttl=600)
-def load_avg_check_data(start_date: st.date_input, end_date: st.date_input) -> list[dict]:
-    return api_client.get_average_check(
-        start_date=start_date.isoformat(),
-        end_date=end_date.isoformat()
-    )
-
 with st.container(border=True):
     col1, col2 = st.columns(2)
     with col1:
@@ -42,10 +28,24 @@ with st.container(border=True):
             max_value=date.today()            
         )
 
+@st.cache_data(ttl=600)
+def load_revenue_data(start_date: str, end_date: str) -> list[dict]:
+    return api_client.get_revenue(
+        start_date=start_date,
+        end_date=end_date
+    )
+
+@st.cache_data(ttl=600)
+def load_avg_check_data(start_date: str, end_date: str) -> list[dict]:
+    return api_client.get_average_check(
+        start_date=start_date,
+        end_date=end_date
+    )
+
 with st.spinner("Загрузка данных из API..."):
     try:
-        revenue_data = load_revenue_data(start_date, end_date)
-        avg_check_data = load_avg_check_data(start_date, end_date)
+        revenue_data = load_revenue_data(start_date.isoformat(), end_date.isoformat())
+        avg_check_data = load_avg_check_data(start_date.isoformat(), end_date.isoformat())
         
         if not revenue_data:
             st.warning("Нет данных за выбранный период")

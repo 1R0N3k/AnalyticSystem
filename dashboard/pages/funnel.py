@@ -16,9 +16,13 @@ st.markdown("""
 В реальной системе воронка всегда сужается сверху вниз.*
 """)
 
+@st.cache_data(ttl=600)
+def load_funnel_data():
+    return api_client.get_funnel_data()
+
 with st.spinner("Загрузка данных..."):
     try:
-        funnel_data = api_client.get_funnel_data()
+        funnel_data = load_funnel_data()
         
         if not funnel_data:
             st.warning("Нет данных для отображения")

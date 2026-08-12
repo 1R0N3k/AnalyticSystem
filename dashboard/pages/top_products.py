@@ -25,7 +25,7 @@ with st.container(border=True):
 
 with st.spinner("Загрузка данных из API..."):
     try:
-        products_data = load_products_data(limit)
+        products_data = load_products_data(int(limit))
         
         if not products_data:
             st.warning("Нет данных о товарах")

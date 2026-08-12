@@ -17,9 +17,13 @@ st.markdown("""
 - 🔴 **Группа C**: ~50% товаров, дающих ~5% выручки (Аутсайдеры)
 """)
 
+@st.cache_data(ttl=600)
+def load_abc_analysis_data():
+    return api_client.get_abc_analysis()
+
 with st.spinner("Расчет категорий..."):
     try:
-        abc_data = api_client.get_abc_analysis()
+        abc_data = load_abc_analysis_data()
         
         if not abc_data:
             st.warning("Нет данных для анализа")

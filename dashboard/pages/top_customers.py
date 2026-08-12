@@ -14,9 +14,13 @@ st.markdown("Рейтинг покупателей по общей сумме п
 
 limit = st.slider("Количество клиентов в топе", min_value=10, max_value=100, value=20, step=10)
 
+@st.cache_data(ttl=600)
+def load_top_customers_data(limit: int):
+    return api_client.get_top_customers_data(limit=limit)
+
 with st.spinner("Загрузка данных..."):
     try:
-        customers_data = api_client.get_top_customers_data(limit=limit)
+        customers_data = load_top_customers_data(int(limit))
         
         if not customers_data:
             st.warning("Нет данных о клиентах")

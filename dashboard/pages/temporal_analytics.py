@@ -12,11 +12,23 @@ st.title("Временная аналитика продаж")
 
 st.markdown("Анализ паттернов покупок: какие дни, часы и месяцы приносят больше всего выручки.")
 
+@st.cache_data(ttl=600)
+def load_revenue_by_day_of_week_data() -> list[dict]:
+    return api_client.get_revenue_by_day_of_week()
+
+@st.cache_data(ttl=600)
+def load_revenue_by_hours_data() -> list[dict]:
+    return api_client.get_revenue_by_hour()
+
+@st.cache_data(ttl=600)
+def load_revenue_by_month() -> list[dict]:
+    return api_client.get_revenue_by_month()
+
 with st.spinner("Загрузка данных..."):
     try:
-        days_data = api_client.get_revenue_by_day_of_week()
-        hours_data = api_client.get_revenue_by_hour()
-        months_data = api_client.get_revenue_by_month()
+        days_data = load_revenue_by_day_of_week_data()
+        hours_data = load_revenue_by_hours_data()
+        months_data = load_revenue_by_month()
         
         if not days_data or not hours_data or not months_data:
             st.warning("Нет данных для отображения")
