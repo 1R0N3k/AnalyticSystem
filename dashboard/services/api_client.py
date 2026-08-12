@@ -104,7 +104,7 @@ def get_revenue_by_month() -> list[dict]:
 
 
 @st.cache_data(ttl=600)
-def get_top_customers_data() -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/top-customers/")
+def get_top_customers_data(limit: int = 100) -> list[dict]:
+    response = requests.get(f"{API_BASE_URL}/top-customers/", params={'limit': limit})
     response.raise_for_status()
     return response.json()

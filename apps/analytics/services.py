@@ -58,8 +58,8 @@ def get_margin_by_day(start_date: date, end_date: date) -> list[MarginDataPoint]
 def get_margin_summary(start_date: date, end_date: date) -> MarginSummary:
     qs = queries.get_margin_summary(start_date, end_date)
 
-    total_revenue = float(raw_data['total_revenue'] or 0)
-    total_cost = float(raw_data['total_cost'] or 0)
+    total_revenue = float(qs['total_revenue'] or 0)
+    total_cost = float(qs['total_cost'] or 0)
     
     total_margin = total_revenue - total_cost
     margin_percent = (total_margin / total_revenue * 100) if total_revenue > 0 else 0
