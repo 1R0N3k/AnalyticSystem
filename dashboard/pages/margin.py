@@ -9,7 +9,7 @@ import requests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
 
-auth_guard.require_auth() 
+auth_guard.require_auth(required_role='manager') 
 st.set_page_config(layout="wide")
 st.title("Финансы и Маржинальность")
 
@@ -60,7 +60,7 @@ with st.spinner("Загрузка данных..."):
             fig.update_layout(hovermode='x unified')
             st.plotly_chart(fig, use_container_width=True)
             
-            with st.expander("Детализация по дням"):
+            with st.expander("Детализация"):
                 st.dataframe(df_daily, use_container_width=True, hide_index=True)
                 
     except requests.exceptions.ConnectionError:

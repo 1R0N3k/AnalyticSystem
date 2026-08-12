@@ -7,7 +7,7 @@ import requests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
 
-auth_guard.require_auth() 
+auth_guard.require_auth(required_role='analyst') 
 st.set_page_config(layout="wide")
 st.title("Клиенты по городам")
 
@@ -64,7 +64,7 @@ with st.spinner("Загрузка данных из API..."):
             )
             st.plotly_chart(fig_bar, use_container_width=True)
 
-            with st.expander("Детализация по городам"):
+            with st.expander("Детализация"):
                 st.dataframe(cities_data, use_container_width=True)
             
     except requests.exceptions.ConnectionError:

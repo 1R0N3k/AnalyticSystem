@@ -8,7 +8,7 @@ import requests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
 
-auth_guard.require_auth() 
+auth_guard.require_auth(required_role='manager') 
 st.set_page_config(layout="wide")
 st.title("Топ клиентов")
 
@@ -54,7 +54,7 @@ with st.spinner("Загрузка данных..."):
             fig.update_layout(yaxis={'categoryorder': 'total ascending'})
             st.plotly_chart(fig, use_container_width=True)
             
-            with st.expander("Детализация по клиентам"):
+            with st.expander("Детализация"):
                 st.dataframe(
                     df,
                     use_container_width=True,

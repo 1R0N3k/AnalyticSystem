@@ -8,7 +8,7 @@ import requests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
 
-auth_guard.require_auth() 
+auth_guard.require_auth(required_role='manager') 
 st.set_page_config(layout="wide")
 st.title("Временная аналитика продаж")
 
@@ -52,6 +52,18 @@ with st.spinner("Загрузка данных..."):
                 fig_days.update_traces(texttemplate='%{text} зак.', textposition='outside')
                 st.plotly_chart(fig_days, use_container_width=True)
                 
+                with st.expander("Детализация по дням недели"):
+                    st.dataframe(
+                        df_days,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "period": "День недели",
+                            "revenue": st.column_config.NumberColumn("Выручка", format="%.2f ₽"),
+                            "order_count": st.column_config.NumberColumn("Кол-во заказов", format="%d")
+                        }
+                    )
+
             with tab2:
                 st.subheader("Выручка по часам суток")
                 
@@ -80,6 +92,18 @@ with st.spinner("Загрузка данных..."):
                 )
                 
                 st.plotly_chart(fig_hours, use_container_width=True)
+
+                with st.expander("Детализация по часам"):
+                    st.dataframe(
+                        df_hours,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "period": "Время",
+                            "revenue": st.column_config.NumberColumn("Выручка", format="%.2f ₽"),
+                            "order_count": st.column_config.NumberColumn("Кол-во заказов", format="%d")
+                        }
+                    )
                 
             with tab3:
                 st.subheader("Динамика выручки по месяцам")
@@ -91,6 +115,17 @@ with st.spinner("Загрузка данных..."):
                 )
                 st.plotly_chart(fig_months, use_container_width=True)
                 
+                with st.expander("Детализация по месяцам"):
+                    st.dataframe(
+                        df_months,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "period": "Месяц",
+                            "revenue": st.column_config.NumberColumn("Выручка", format="%.2f ₽"),
+                            "order_count": st.column_config.NumberColumn("Кол-во заказов", format="%d")
+                        }
+                    )
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API. Убедитесь, что сервер запущен на порту 8000.")
     except Exception as e:

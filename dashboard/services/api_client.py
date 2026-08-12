@@ -85,9 +85,14 @@ def get_margin(start_date: Optional[str] = None, end_date: Optional[str] = None)
         params['end'] = end_date
 
     response = requests.get(f"{API_BASE_URL}/margin/", params=params, headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+    
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
+        return {}
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
         return {}
 
     response.raise_for_status()
@@ -103,10 +108,15 @@ def get_margin_by_day(start_date: Optional[str] = None, end_date: Optional[str] 
         params['end'] = end_date
 
     response = requests.get(f"{API_BASE_URL}/margin-by-day/", params=params, headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+    
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
-        return {}
+        return []
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
+        return []
     response.raise_for_status()
     return response.json()
 
@@ -114,10 +124,15 @@ def get_margin_by_day(start_date: Optional[str] = None, end_date: Optional[str] 
 @st.cache_data(ttl=600)
 def get_abc_analysis() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/abc-analysis/", headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+    
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
-        return {}
+        return []
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
+        return []
     response.raise_for_status()
     return response.json()
 
@@ -132,10 +147,15 @@ def get_funnel_data() -> list[dict]:
 @st.cache_data(ttl=600)
 def get_revenue_by_day_of_week() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-day-of-week/", headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+    
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
-        return {}
+        return []
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
+        return []
     response.raise_for_status()
     return response.json()
 
@@ -143,10 +163,15 @@ def get_revenue_by_day_of_week() -> list[dict]:
 @st.cache_data(ttl=600)
 def get_revenue_by_hour() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-hour/", headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
-        return {}
+        return []
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
+        return []
     response.raise_for_status()
     return response.json()
 
@@ -154,20 +179,29 @@ def get_revenue_by_hour() -> list[dict]:
 @st.cache_data(ttl=600)
 def get_revenue_by_month() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-months/", headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
-        return {}
+        return []
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
+        return []
     response.raise_for_status()
     return response.json()
-
 
 @st.cache_data(ttl=600)
 def get_top_customers_data(limit: int = 100) -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/top-customers/", params={'limit': limit}, headers=get_auth_headers())
-    if response.status_code in [401, 403]:
-        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+
+    if response.status_code == 401:
+        st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
-        return {}
+        return []
+    if response.status_code == 403:
+        error_msg = response.json().get('error', 'Доступ запрещён')
+        st.error(f"{error_msg}")
+        return []
     response.raise_for_status()
     return response.json()
