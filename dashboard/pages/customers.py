@@ -15,11 +15,6 @@ st.title("Клиенты по городам")
 def load_cities_data() -> list[dict]:
     return api_client.get_customers_by_city()
 
-if 'customers_chart_png_data' not in st.session_state:
-    st.session_state['customers_chart_png_data'] = None
-if 'customers_bar_png_data' not in st.session_state:
-    st.session_state['customers_bar_png_data'] = None
-
 with st.spinner("Загрузка данных из API..."):
     try:
         cities_data = load_cities_data()
@@ -52,27 +47,6 @@ with st.spinner("Загрузка данных из API..."):
         
             fig_pie.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig_pie, use_container_width=True)
-        
-            with st.container(horizontal=True, vertical_alignment="center"):
-                if st.session_state.customers_chart_png_data is None:
-                    if st.button(
-                        "Подготовить график к скачиванию", 
-                        key="chart_prepare", 
-                        disabled=False if st.session_state.customers_chart_png_data is None else True
-                    ):
-                        with st.spinner("Генерируем изображение..."):
-                            st.session_state.customers_chart_png_data = fig_pie.to_image(format="png")
-                            st.rerun()
-
-                if st.session_state.customers_chart_png_data is not None:
-                    st.download_button(
-                            label="Скачать как PNG",
-                            key="png_chart_download",
-                            data=st.session_state.customers_chart_png_data,
-                            file_name="by_city_chart.png",
-                            mime="image/png",
-                            on_click="ignore",
-                    )
 
             st.subheader("️ Топ-10 городов по заказам")
             top_10_cities = cities_data[:10]
@@ -89,38 +63,9 @@ with st.spinner("Загрузка данных из API..."):
                 color_continuous_scale='Blues'
             )
             st.plotly_chart(fig_bar, use_container_width=True)
-            
-            with st.container(horizontal=True, vertical_alignment="center"):
-                if st.session_state.customers_bar_png_data is None:
-                    if st.button(
-                        "Подготовить график к скачиванию", 
-                        key="bar_prepare", 
-                        disabled=False if st.session_state.customers_bar_png_data is None else True
-                    ):
-                        with st.spinner("Генерируем изображение..."):
-                            st.session_state.customers_bar_png_data = fig_bar.to_image(format="png")
-                            st.rerun()
-
-                if st.session_state.customers_bar_png_data is not None:
-                    st.download_button(
-                            label="Скачать как PNG",
-                            key="png_bar_download",
-                            data=st.session_state.customers_bar_png_data,
-                            file_name="by_city_chart.png",
-                            mime="image/png",
-                            on_click="ignore",
-                    )
 
             with st.expander("Детализация по городам"):
                 st.dataframe(cities_data, use_container_width=True)
-
-                st.download_button(
-                    label="Скачать CSV",
-                    data=download_converter.convert_for_download_csv(cities_data),
-                    file_name="data.csv",
-                    mime="text/csv",
-                    icon=":material/download:",
-                )
             
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API. Убедитесь, что сервер запущен на порту 8000.")

@@ -10,11 +10,6 @@ from services import api_client, download_converter
 st.set_page_config(layout="wide")
 st.title("Топ товаров по выручке")
 
-if 'top_products_chart_png_data' not in st.session_state:
-    st.session_state['top_products_chart_png_data'] = None
-if 'last_chart_limit' not in st.session_state:
-    st.session_state['last_chart_limit'] = None
-
 @st.cache_data(ttl=600)
 def load_products_data(limit: int) -> list[dict]:
     return api_client.get_top_products(limit=limit)
@@ -65,41 +60,8 @@ with st.spinner("Загрузка данных из API..."):
             )
             st.plotly_chart(fig, use_container_width=True)
             
-            if st.session_state.last_chart_limit != limit:
-                st.session_state.top_products_chart_png_data = None
-                st.session_state.last_chart_limit = limit
-
-            with st.container(horizontal=True, vertical_alignment="center"):
-                if st.session_state.top_products_chart_png_data is None:
-                    if st.button(
-                        "Подготовить график к скачиванию", 
-                        key="chart_prepare", 
-                        disabled=False if st.session_state.top_products_chart_png_data is None else True
-                    ):
-                        with st.spinner("Генерируем изображение..."):
-                            st.session_state.top_products_chart_png_data = fig.to_image(format="png")
-                            st.rerun()
-
-                if st.session_state.top_products_chart_png_data is not None:
-                    st.download_button(
-                            label="Скачать как PNG",
-                            data=st.session_state.top_products_chart_png_data,
-                            file_name="top_products_chart.png",
-                            mime="image/png",
-                            on_click="ignore",
-                    )
-
             with st.expander("Детализация"):
                 st.dataframe(products_data, use_container_width=True)
-
-
-                st.download_button(
-                        label="Download CSV",
-                        data=download_converter.convert_for_download_csv(products_data),
-                        file_name="data.csv",
-                        mime="text/csv",
-                        icon=":material/download:",
-                )
             
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API. Убедитесь, что сервер запущен на порту 8000.")
