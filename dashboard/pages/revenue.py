@@ -4,6 +4,7 @@ from datetime import date, timedelta
 import sys
 import os
 import requests
+import requests
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
