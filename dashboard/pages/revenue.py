@@ -6,7 +6,7 @@ import os
 import requests
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from services import api_client, download_converter
+from services import api_client
 
 st.set_page_config(layout="wide")
 st.title("Выручка по периодам")
