@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'customers',
     'etl',
     'orders',
+    'auth_api.apps.AuthApiConfig'
 ]
 
 MIDDLEWARE = [

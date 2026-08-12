@@ -1,12 +1,13 @@
 from django.shortcuts import render
-
-# Create your views here.
-
 from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.views import View
 
+from apps.auth_api.mixins import TokenRequiredMixin 
+
 from . import services
+
+# Create your views here.
 
 
 class RevenueView(View):
@@ -46,7 +47,8 @@ class CustomersByCityView(View):
         return JsonResponse(data, safe=False)
 
 
-class MarginView(View):
+class MarginView(TokenRequiredMixin, View):
+    required_role = 'manager'
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
@@ -59,7 +61,9 @@ class MarginView(View):
         return JsonResponse(data, safe=False)
 
 
-class MarginByDayView(View):
+class MarginByDayView(TokenRequiredMixin, View):
+    required_role = 'manager'
+
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
@@ -71,8 +75,8 @@ class MarginByDayView(View):
         data = [item.model_dump() for item in margins]
         return JsonResponse(data, safe=False)
 
-
-class ABCAnalysisView(View):
+class ABCAnalysisView(TokenRequiredMixin, View):
+    required_role = 'manager'
     def get(self, request):
         abc_analysis = services.get_abc_analysis()
         data = [item.model_dump() for item in abc_analysis]
@@ -85,31 +89,31 @@ class FunnelView(View):
         data = [item.model_dump() for item in funnel]
         return JsonResponse(data, safe=False)
 
-
-class RevenueByDayOfWeekView(View):
+class RevenueByDayOfWeekView(TokenRequiredMixin, View):
+    required_role = 'manager'
     def get(self, request):
         revenue = services.get_revenue_by_day_of_week()
         data = [item.model_dump() for item in revenue]
         return JsonResponse(data, safe=False)
 
-
-class RevenueByHourView(View):
+class RevenueByHourView(TokenRequiredMixin, View):
+    required_role = 'manager'
     def get(self, request):
         revenue = services.get_revenue_by_hour()
         data = [item.model_dump() for item in revenue]
         return JsonResponse(data, safe=False)
 
-    
-class RevenueByMonthView(View):
+class RevenueByMonthView(TokenRequiredMixin, View):
+    required_role = 'manager'
     def get(self, request):
         revenue = services.get_revenue_by_month()
         data = [item.model_dump() for item in revenue]
         return JsonResponse(data, safe=False)
 
-
-class TopCustomersView(View):
+class TopCustomersView(TokenRequiredMixin, View):
+    required_role = 'manager'
     def get(self, request):
         limit = int(request.GET.get('limit', 100))
-        customers = services.get_top_customers_data()
+        customers = services.get_top_customers_data(limit)
         data = [item.model_dump() for item in customers]
         return JsonResponse(data, safe=False)
