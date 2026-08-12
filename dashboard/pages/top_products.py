@@ -5,8 +5,9 @@ import os
 import requests
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from services import api_client
+from services import api_client, auth_guard
 
+auth_guard.require_auth() 
 st.set_page_config(layout="wide")
 st.title("Топ товаров по выручке")
 

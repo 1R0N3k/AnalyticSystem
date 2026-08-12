@@ -4,6 +4,40 @@ import streamlit as st
 
 
 API_BASE_URL = "http://127.0.0.1:8000/analytics/api"
+AUTH_API_BASE_URL = "http://127.0.0.1:8000/api/auth"
+
+def get_auth_headers() -> dict:
+    token = st.session_state.get("auth_token")
+    if token:
+        return {"Authorization": f"Token {token}"}
+    return {}
+
+
+def login_user(username: str, password: str) -> bool:
+    response = requests.post(
+        f"{AUTH_API_BASE_URL}/login/",
+        json={"username": username, "password": password}
+    )
+    if response.status_code == 200:
+        data = response.json()
+        st.session_state.auth_token = data["token"]
+        st.session_state.username = data["username"]
+        st.session_state.roles = data["roles"]
+        return True
+    else:
+        st.error(response.json().get("error", "Ошибка входа"))
+        return False
+
+
+def logout_user():
+    token = st.session_state.get("auth_token")
+    if token:
+        requests.post(f"{AUTH_API_BASE_URL}/logout/", headers={"Authorization": f"Token {token}"})
+    
+    for key in ["auth_token", "username", "roles"]:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.rerun()
 
 @st.cache_data(ttl=600)
 def get_revenue(start_date: Optional[str] = None, end_date: Optional[str] = None) -> list[dict]:
@@ -50,7 +84,12 @@ def get_margin(start_date: Optional[str] = None, end_date: Optional[str] = None)
     if end_date:
         params['end'] = end_date
 
-    response = requests.get(f"{API_BASE_URL}/margin/", params=params)
+    response = requests.get(f"{API_BASE_URL}/margin/", params=params, headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
+
     response.raise_for_status()
     return response.json()
 
@@ -63,14 +102,22 @@ def get_margin_by_day(start_date: Optional[str] = None, end_date: Optional[str] 
     if end_date:
         params['end'] = end_date
 
-    response = requests.get(f"{API_BASE_URL}/margin-by-day/", params=params)
+    response = requests.get(f"{API_BASE_URL}/margin-by-day/", params=params, headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
     response.raise_for_status()
     return response.json()
 
 
 @st.cache_data(ttl=600)
 def get_abc_analysis() -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/abc-analysis/")
+    response = requests.get(f"{API_BASE_URL}/abc-analysis/", headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
     response.raise_for_status()
     return response.json()
 
@@ -84,27 +131,43 @@ def get_funnel_data() -> list[dict]:
 
 @st.cache_data(ttl=600)
 def get_revenue_by_day_of_week() -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/revenue-by-day-of-week/")
+    response = requests.get(f"{API_BASE_URL}/revenue-by-day-of-week/", headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
     response.raise_for_status()
     return response.json()
 
 
 @st.cache_data(ttl=600)
 def get_revenue_by_hour() -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/revenue-by-hour/")
+    response = requests.get(f"{API_BASE_URL}/revenue-by-hour/", headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
     response.raise_for_status()
     return response.json()
 
 
 @st.cache_data(ttl=600)
 def get_revenue_by_month() -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/revenue-by-months/")
+    response = requests.get(f"{API_BASE_URL}/revenue-by-months/", headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
     response.raise_for_status()
     return response.json()
 
 
 @st.cache_data(ttl=600)
 def get_top_customers_data(limit: int = 100) -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/top-customers/", params={'limit': limit})
+    response = requests.get(f"{API_BASE_URL}/top-customers/", params={'limit': limit}, headers=get_auth_headers())
+    if response.status_code in [401, 403]:
+        st.error("Сессия истекла или нет прав доступа. Пожалуйста, войдите снова.")
+        logout_user()
+        return {}
     response.raise_for_status()
     return response.json()

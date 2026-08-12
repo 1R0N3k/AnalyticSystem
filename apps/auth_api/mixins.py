@@ -3,14 +3,8 @@ from .models import AuthToken
 
 
 class TokenRequiredMixin:
-    """
-    Mixin для защиты Class-Based Views.
-    Проверяет токен в заголовке и роль пользователя перед выполнением запроса.
-    """
-    required_role = None  # Переопределяется в конкретном View
-
+    required_role = None
     def dispatch(self, request, *args, **kwargs):
-        # 1. Получаем токен из заголовка
         auth_header = request.headers.get('Authorization', '')
         
         if not auth_header.startswith('Token '):
@@ -21,7 +15,6 @@ class TokenRequiredMixin:
         
         token_key = auth_header.split(' ')[1]
         
-        # 2. Валидируем токен
         user = AuthToken.validate_token(token_key)
         
         if user is None:
@@ -30,7 +23,6 @@ class TokenRequiredMixin:
                 status=401
             )
         
-        # 3. Проверяем роль (если она указана для этого View)
         if self.required_role:
             user_roles = user.groups.values_list('name', flat=True)
             if self.required_role not in user_roles:
@@ -39,6 +31,5 @@ class TokenRequiredMixin:
                     status=403
                 )
         
-        # 4. Всё ок, добавляем пользователя в request и передаём управление дальше
         request.user = user
         return super().dispatch(request, *args, **kwargs)
