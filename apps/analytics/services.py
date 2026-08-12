@@ -55,7 +55,7 @@ def get_margin_by_day(start_date: date, end_date: date) -> list[MarginDataPoint]
     return result
 
 
-def get_margin_summary() -> MarginSummary:
+def get_margin_summary(start_date: date, end_date: date) -> MarginSummary:
     qs = queries.get_margin_summary(start_date, end_date)
 
     total_revenue = float(raw_data['total_revenue'] or 0)
