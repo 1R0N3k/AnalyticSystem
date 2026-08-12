@@ -9,7 +9,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
 
 auth_guard.require_auth(required_role='manager') 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Временная аналитика продаж",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 st.title("Временная аналитика продаж")
 
 st.markdown("Анализ паттернов покупок: какие дни, часы и месяцы приносят больше всего выручки.")

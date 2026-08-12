@@ -10,7 +10,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
 
 auth_guard.require_auth(required_role='manager') 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Маржинальность",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 st.title("Финансы и Маржинальность")
 
 st.markdown("Анализ реальной прибыльности бизнеса. Учитываются только оплаченные и доставленные заказы.")

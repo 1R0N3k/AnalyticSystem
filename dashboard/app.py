@@ -1,40 +1,16 @@
 import streamlit as st
 
-st.set_page_config(layout="wide")
-st.set_page_config(
-    page_title="Аналитика продаж",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+pages = [
+    st.Page("pages/application.py", title="О системе", icon="📈"),
+    st.Page("pages/revenue.py", title="Выручка по периодам", icon="📈"),
+    st.Page("pages/top_products.py", title="Топ товаров", icon="🏆"),
+    st.Page("pages/customers.py", title="Клиенты по городам", icon="👥"),
+    st.Page("pages/margin.py", title="Финансы и Маржинальность", icon="💰"),
+    st.Page("pages/abc_analysis.py", title="ABC-анализ", icon="🏷️"),
+    st.Page("pages/funnel.py", title="Воронка конверсии", icon="🌪️"),
+    st.Page("pages/temporal_analytics.py", title="Временная аналитика", icon="⏰"),
+    st.Page("pages/top_customers.py", title="Топ клиентов", icon="👑"),
+]
 
-st.title("Аналитика продаж интернет-магазина")
-
-st.markdown("""
-### Добро пожаловать в систему аналитики!
-
-Этот дашборд предоставляет интерактивную визуализацию данных о продажах интернет-магазина.
-
-**Используйте боковое меню для навигации:**
-
--**Выручка** — анализ динамики выручки по дням с фильтрами по датам
--**Топ товаров** — рейтинг самых продаваемых товаров по выручке
--**Клиенты** — географическое распределение заказов по городам
-
----
-
-**Технологии:**
-- Backend: Django + PostgreSQL
-- API: REST (JSON)
-- Frontend: Streamlit + Plotly
-""")
-
-with st.sidebar:
-    st.header("ℹО системе")
-    st.markdown("""
-    - **Источник данных:** PostgreSQL
-    - **Количество заказов:** ~10 000
-    - **Период:** последний год
-    - **Обновление:** в реальном времени
-    """)
-    
+pg = st.navigation(pages)
+pg.run()
