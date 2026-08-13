@@ -4,13 +4,50 @@ services:
     container_name: analytic-system-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ecommerce_analytics
+      POSTGRES_DB: ${POSTGRES_NAME}
     ports:
       - "${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  django:
+    build:
+      dockerfile: Dockerfile
+    container_name: analytic-system-api
+    environment:
+      POSTGRES_NAME: "${POSTGRES_NAME}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST_PORT: "${POSTGRES_HOST_PORT}"
+      DEBUG: "${DEBUG}"
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS}"
+    ports:
+      - "${DJANGO_PORT}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  dashboard:
+      build:
+        context: .
+        dockerfile: dashboard/Dockerfile
+      container_name: analytic-system-dashboard
+      environment:
+        API_BASE_URL: "http://django:${DJANGO_PORT}/analytics/api"
+        AUTH_API_BASE_URL: "http://django:${DJANGO_PORT}/api/auth"
+        
+      ports:
+        - "8501:8501"
+      depends_on:
+        django:
+          condition: service_healthy
+      restart: unless-stopped
 volumes:
   pgdata:

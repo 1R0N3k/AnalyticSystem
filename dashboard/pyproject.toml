@@ -1,0 +1,16 @@
+[project]
+name = "analytic-dashboard"
+version = "0.1.0"
+description = "Streamlit dashboard for Analytic System"
+requires-python = ">=3.14"
+license = { text = "MIT" }
+authors = [{ name = "1R0N3k" }]
+
+dependencies = [
+    "streamlit>=1.36.0",
+    "dotenv>=0.9.9",
+    "plotly>=5.18.0",
+    "kaleido>=1.3.0",
+    "pandas>=2.2.0",
+    "requests>=2.31.0",
+]
