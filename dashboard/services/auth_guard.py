@@ -8,7 +8,7 @@ ROLE_LEVELS = {
     'manager': 2,
 }
 
-def require_auth(required_role: str = None):
+def require_auth(required_role: str | None = None):
     try:
         if "auth_token" not in st.session_state:
             st.title("Авторизация в системе")

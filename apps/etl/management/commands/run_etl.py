@@ -1,11 +1,3 @@
-"""
-Management-команда для наполнения базы данных тестовыми заказами.
-
-Использование:
-    python manage.py run_etl --rows 10000
-    python manage.py run_etl --rows 500 --clear
-"""
-
 import time
 from contextlib import suppress
 

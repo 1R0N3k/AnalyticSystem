@@ -23,6 +23,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "django-stubs>=6.1.0",
+    "djangorestframework-stubs>=3.18.0",
     "mypy>=2.3.0",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
@@ -84,3 +86,35 @@ section-order = [
 "dashboard/app.py" = [
     "E402",
 ]
+
+[tool.mypy]
+python_version = "3.14"
+plugins = ["mypy_django_plugin.main", "pydantic.mypy"]
+
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = ["."]
+
+exclude = [
+    "migrations/",
+    "manage.py",
+    ".venv/",
+    "venv/",
+    "__pycache__/",
+]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[[tool.mypy.overrides]]
+module = "apps.*"
+disable_error_code = ["attr-defined", "import-not-found", "name-defined"]
+
+[[tool.mypy.overrides]]
+module = ["dashboard.pages.*", "plotly.*", "streamlit_autorefresh.*", "pandas.*"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "dashboard.services.*"
+disallow_untyped_defs = false
+check_untyped_defs = true

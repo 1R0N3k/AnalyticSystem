@@ -48,13 +48,13 @@ def get_revenue(start_date: str | None = None, end_date: str | None = None) -> l
 
     response = requests.get(f"{API_BASE_URL}/revenue/", params=params)
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 @st.cache_data(ttl=600)
 def get_top_products(limit: int = 10) -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/top-products/", params={'limit': limit})
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 @st.cache_data(ttl=600)
 def get_average_check(start_date: str | None = None, end_date: str | None = None) -> dict:
@@ -66,13 +66,13 @@ def get_average_check(start_date: str | None = None, end_date: str | None = None
 
     response = requests.get(f"{API_BASE_URL}/average-check/", params=params)
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 @st.cache_data(ttl=600)
 def get_customers_by_city() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/customers-by-city/")
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
@@ -95,7 +95,7 @@ def get_margin(start_date: str | None = None, end_date: str | None = None) -> di
         return {}
 
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
@@ -117,7 +117,7 @@ def get_margin_by_day(start_date: str | None = None, end_date: str | None = None
         st.error(f"{error_msg}")
         return []
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
@@ -133,14 +133,14 @@ def get_abc_analysis() -> list[dict]:
         st.error(f"{error_msg}")
         return []
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
 def get_funnel_data() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/funnel/")
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
@@ -156,7 +156,7 @@ def get_revenue_by_day_of_week() -> list[dict]:
         st.error(f"{error_msg}")
         return []
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
@@ -172,7 +172,7 @@ def get_revenue_by_hour() -> list[dict]:
         st.error(f"{error_msg}")
         return []
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 
 @st.cache_data(ttl=600)
@@ -188,7 +188,7 @@ def get_revenue_by_month() -> list[dict]:
         st.error(f"{error_msg}")
         return []
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]
 
 @st.cache_data(ttl=600)
 def get_top_customers_data(limit: int = 100) -> list[dict]:
@@ -203,4 +203,4 @@ def get_top_customers_data(limit: int = 100) -> list[dict]:
         st.error(f"{error_msg}")
         return []
     response.raise_for_status()
-    return response.json()
+    return response.json() # type: ignore[no-any-return]

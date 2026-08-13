@@ -20,4 +20,4 @@ class AuthTokenAdmin(admin.ModelAdmin):
         if obj.is_expired:
             return format_html('<span style="color: red;">Истёк</span>')
         return format_html('<span style="color: green;">Активен</span>')
-    is_expired_status.short_description = 'Статус'
+    is_expired_status.short_description = 'Статус'  # type: ignore[attr-defined]

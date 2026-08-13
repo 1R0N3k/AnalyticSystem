@@ -25,7 +25,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def customer_name(self, obj):
         return f"{obj.customer.name} {obj.customer.surname}"
-    customer_name.short_description = 'Клиент'
+    customer_name.short_description = 'Клиент'  # type: ignore[attr-defined]
 
     def status_colored(self, obj):
         colors = {
@@ -37,7 +37,7 @@ class OrderAdmin(admin.ModelAdmin):
         color = colors.get(obj.status, 'black')
         status_display = dict(Order.Status.choices).get(obj.status, obj.status)
         return format_html('<span style="color: {}; font-weight: bold;">{}</span>', color, status_display)
-    status_colored.short_description = 'Статус'
+    status_colored.short_description = 'Статус'  # type: ignore[attr-defined]
 
     @admin.action(description='Пометить выбранные заказы как "Доставлен"')
     def mark_as_delivered(self, request, queryset):

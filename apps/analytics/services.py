@@ -92,7 +92,7 @@ def get_abc_analysis() -> list[ABCProduct]:
     total_revenue = sum(float(item['total_revenue'] or 0) for item in qs)
 
     result = []
-    cumulative_revenue = 0
+    cumulative_revenue: float = 0.0
     for item in qs:
         revenue = float(item['total_revenue'] or 0)
         cumulative_revenue += revenue
@@ -205,7 +205,7 @@ def get_revenue_by_month() -> list[TimeDataPoint]:
         ))
 
     result.sort(key=lambda x: next((item['month'] for item in qs
-                                    if f'{month_names.get(item["month"].month, "")} {item["month"].year}' == x.period), None))
+                                    if f'{month_names.get(item["month"].month, "")} {item["month"].year}' == x.period), 0))
 
     return result
 
