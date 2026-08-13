@@ -4,7 +4,7 @@ from .models import AuthToken
 
 
 class TokenRequiredMixin:
-    required_role: str | None = None 
+    required_role: str | None = None
     def dispatch(self, request, *args, **kwargs):
         auth_header = request.headers.get('Authorization', '')
 

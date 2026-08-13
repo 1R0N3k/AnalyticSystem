@@ -5,10 +5,9 @@ from catalog.models import Category, Product
 from customers.models import Customer
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
-from orders.models import Order, OrderItem
-
 from etl.generators import generate_mock_orders
 from etl.loader import load_orders
+from orders.models import Order, OrderItem
 
 
 class Command(BaseCommand):
