@@ -1,7 +1,7 @@
 #:tombi schema.strict = false
 
 [client]
-toolbarMode = "developer"  # заменить на viewer
+toolbarMode = "viewer"
 
 [theme]
 base = "light"

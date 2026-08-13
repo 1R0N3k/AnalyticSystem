@@ -1,7 +1,7 @@
 import streamlit as st
 
 pages = [
-    st.Page("pages/application.py", title="О системе", icon="📈"),
+    st.Page("pages/application.py", title="О системе", icon="🏠"),
     st.Page("pages/revenue.py", title="Выручка по периодам", icon="📈"),
     st.Page("pages/top_products.py", title="Топ товаров", icon="🏆"),
     st.Page("pages/customers.py", title="Клиенты по городам", icon="👥"),
