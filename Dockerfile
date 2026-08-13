@@ -24,5 +24,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/admin || exit 1
 
 CMD uv run python manage.py migrate \
-    && uv run python manage.py createsuperuser \
     && uv run python manage.py runserver 0.0.0.0:8000

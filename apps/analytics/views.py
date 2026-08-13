@@ -10,7 +10,8 @@ from . import services
 # Create your views here.
 
 
-class RevenueView(View):
+class RevenueView(TokenRequiredMixin, View):
+    required_role = 'analyst'
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
@@ -22,14 +23,16 @@ class RevenueView(View):
         return JsonResponse(data, safe=False)
 
 
-class TopProductsView(View):
+class TopProductsView(TokenRequiredMixin, View):
+    required_role = 'analyst'
     def get(self, request):
         limit = int(request.GET.get('limit', 10))
         data = services.get_top_products_data(limit)
         return JsonResponse(data, safe=False)
 
 
-class AverageCheckView(View):
+class AverageCheckView(TokenRequiredMixin, View):
+    required_role = 'analyst'
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
@@ -41,7 +44,8 @@ class AverageCheckView(View):
         return JsonResponse(data)
 
 
-class CustomersByCityView(View):
+class CustomersByCityView(TokenRequiredMixin, View):
+    required_role = 'analyst'
     def get(self, request):
         data = services.get_customers_by_city_data()
         return JsonResponse(data, safe=False)
@@ -63,7 +67,6 @@ class MarginView(TokenRequiredMixin, View):
 
 class MarginByDayView(TokenRequiredMixin, View):
     required_role = 'manager'
-
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
@@ -83,7 +86,8 @@ class ABCAnalysisView(TokenRequiredMixin, View):
         return JsonResponse(data, safe=False)
 
 
-class FunnelView(View):
+class FunnelView(TokenRequiredMixin, View):
+    required_role = 'analyst'
     def get(self, request):
         funnel = services.get_funnel_data()
         data = [item.model_dump() for item in funnel]
