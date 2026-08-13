@@ -7,15 +7,16 @@ Management-команда для наполнения базы данных те
 """
 
 import time
+from contextlib import suppress
 
+from catalog.models import Category, Product
+from customers.models import Customer
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
+from orders.models import Order, OrderItem
 
 from etl.generators import generate_mock_orders
 from etl.loader import load_orders
-from catalog.models import Category, Product
-from customers.models import Customer
-from orders.models import Order, OrderItem
 
 
 class Command(BaseCommand):
@@ -87,7 +88,7 @@ class Command(BaseCommand):
                 )
 
         except Exception as e:
-            raise CommandError(f'Ошибка при загрузке данных: {e}')
+            raise CommandError(f'Ошибка при загрузке данных: {e}') from e
 
         total_time = time.time() - start_time
         stats_after = self._get_stats()
@@ -110,12 +111,10 @@ class Command(BaseCommand):
                 'orders_orderitem', 'orders_order', 'catalog_product',
                 'catalog_category', 'customers_customer'
             ]:
-                try:
+                with suppress(Exception):
                     cursor.execute(
                         f'ALTER SEQUENCE {table}_id_seq RESTART WITH 1'
                     )
-                except Exception:
-                    pass
 
         self.stdout.write(self.style.SUCCESS('База очищена\n'))
 

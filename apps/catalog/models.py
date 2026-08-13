@@ -27,10 +27,10 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     cost = models.DecimalField(
         max_digits=10,
-        decimal_places=2, 
+        decimal_places=2,
         help_text='Себестоимость'
     )
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -38,6 +38,6 @@ class Product(models.Model):
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
         ordering = ['name']
-    
+
     def __str__(self):
         return self.name

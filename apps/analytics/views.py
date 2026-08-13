@@ -1,9 +1,9 @@
-from django.shortcuts import render
 from datetime import datetime, timedelta
+
 from django.http import JsonResponse
 from django.views import View
 
-from apps.auth_api.mixins import TokenRequiredMixin 
+from apps.auth_api.mixins import TokenRequiredMixin
 
 from . import services
 
@@ -14,10 +14,10 @@ class RevenueView(View):
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
-        
+
         end_date = datetime.fromisoformat(end_str).date() if end_str else datetime.now().date()
         start_date = datetime.fromisoformat(start_str).date() if start_str else end_date - timedelta(days=30)
-        
+
         data = services.get_revenue_data(start_date, end_date)
         return JsonResponse(data, safe=False)
 
@@ -33,10 +33,10 @@ class AverageCheckView(View):
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
-        
+
         end_date = datetime.fromisoformat(end_str).date() if end_str else datetime.now().date()
         start_date = datetime.fromisoformat(start_str).date() if start_str else end_date - timedelta(days=30)
-        
+
         data = services.get_average_check_data(start_date, end_date)
         return JsonResponse(data)
 
@@ -52,10 +52,10 @@ class MarginView(TokenRequiredMixin, View):
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
-        
+
         end_date = datetime.fromisoformat(end_str).date() if end_str else datetime.now().date()
         start_date = datetime.fromisoformat(start_str).date() if start_str else end_date - timedelta(days=30)
-        
+
         margin = services.get_margin_summary(start_date, end_date)
         data = margin.model_dump()
         return JsonResponse(data, safe=False)
@@ -67,10 +67,10 @@ class MarginByDayView(TokenRequiredMixin, View):
     def get(self, request):
         end_str = request.GET.get('end')
         start_str = request.GET.get('start')
-        
+
         end_date = datetime.fromisoformat(end_str).date() if end_str else datetime.now().date()
         start_date = datetime.fromisoformat(start_str).date() if start_str else end_date - timedelta(days=30)
-        
+
         margins = services.get_margin_by_day(start_date, end_date)
         data = [item.model_dump() for item in margins]
         return JsonResponse(data, safe=False)

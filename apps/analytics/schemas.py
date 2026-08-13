@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from datetime import date
+
+from pydantic import BaseModel
+
 
 class MarginDataPoint(BaseModel):
     day: date
@@ -21,10 +23,10 @@ class ABCProduct(BaseModel):
     cumulative_percent: float
 
 class FunnelStage(BaseModel):
-    status_key: str       
-    status_name: str      
-    count: int            
-    conversion_rate: float 
+    status_key: str
+    status_name: str
+    count: int
+    conversion_rate: float
 
 class TimeDataPoint(BaseModel):
     period: str
@@ -32,9 +34,9 @@ class TimeDataPoint(BaseModel):
     order_count: int
 
 class TopCustomer(BaseModel):
-    full_name: str    
-    email: str            
-    city: str             
-    total_spent: float    
-    order_count: int      
-    last_order_date: date 
+    full_name: str
+    email: str
+    city: str
+    total_spent: float
+    order_count: int
+    last_order_date: date

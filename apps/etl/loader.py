@@ -1,9 +1,9 @@
-from django.db import transaction
-
-from .schemas import RawOrder
-from orders.models import Order, OrderItem
 from catalog.models import Category, Product
 from customers.models import Customer
+from django.db import transaction
+from orders.models import Order, OrderItem
+
+from .schemas import RawOrder
 
 
 @transaction.atomic
@@ -16,25 +16,25 @@ def load_order(raw_order: RawOrder) -> Order:
             'city': raw_order.city,
         }
     )
-    
+
     total_amount = sum(
-        item.price * item.quantity 
+        item.price * item.quantity
         for item in raw_order.items_list
     )
-    
+
     order = Order.objects.create(
         customer=customer,
         created_at=raw_order.created_at,
         status=raw_order.status,
         due=total_amount,
     )
-    
+
     order_items = []
     for item in raw_order.items_list:
         category, _ = Category.objects.get_or_create(
             name=item.category,
         )
-        
+
         product, _ = Product.objects.get_or_create(
             name=item.name,
             defaults={
@@ -43,7 +43,7 @@ def load_order(raw_order: RawOrder) -> Order:
                 'cost': item.cost,
             }
         )
-        
+
         order_items.append(OrderItem(
             order=order,
             product=product,
@@ -51,9 +51,9 @@ def load_order(raw_order: RawOrder) -> Order:
             price=item.price,
             cost=item.cost
         ))
-    
+
     OrderItem.objects.bulk_create(order_items)
-    
+
     return order
 
 
@@ -66,5 +66,5 @@ def load_orders(orders: list[RawOrder]) -> int:
         except Exception as e:
             print(f"Ошибка при загрузке заказа: {e}")
             continue
-    
+
     return loaded_count

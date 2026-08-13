@@ -1,12 +1,12 @@
-import streamlit as st
-import plotly.express as px
-import sys
 import os
+import sys
+
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
-
 
 auth_guard.require_auth(required_role='analyst')
 
@@ -59,15 +59,15 @@ with st.container(
 with st.spinner("Загрузка данных из API..."):
     try:
         cities_data = load_cities_data()
-        
+
         if not cities_data:
             st.warning("Нет данных о клиентах или доступ ограничен.")
             st.stop()
-        
+
         total_cities = len(cities_data)
         total_customers = sum(item['total_customers'] for item in cities_data)
         total_orders = sum(item['total_orders'] for item in cities_data)
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()
@@ -117,19 +117,17 @@ fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
 
 if st.session_state.layout_horizontal:
     col_left, col_right = st.columns(2)
-    with col_left:
-        with st.container(border=True):
-            st.subheader("Доля заказов по городам")
-            st.plotly_chart(fig_pie)
-    with col_right:
-        with st.container(border=True):
-            st.subheader(f"Топ-{top_n} городов по заказам")
-            st.plotly_chart(fig_bar)
+    with col_left, st.container(border=True):
+        st.subheader("Доля заказов по городам")
+        st.plotly_chart(fig_pie)
+    with col_right, st.container(border=True):
+        st.subheader(f"Топ-{top_n} городов по заказам")
+        st.plotly_chart(fig_bar)
 else:
     with st.container(border=True):
         st.subheader("Доля заказов по городам")
         st.plotly_chart(fig_pie)
-    
+
     with st.container(border=True):
         st.subheader(f"Топ-{top_n} городов по заказам")
         st.plotly_chart(fig_bar)

@@ -1,6 +1,7 @@
-import streamlit as st
-from . import api_client
 import requests
+import streamlit as st
+
+from . import api_client
 
 ROLE_LEVELS = {
     'analyst': 1,
@@ -12,12 +13,12 @@ def require_auth(required_role: str = None):
         if "auth_token" not in st.session_state:
             st.title("Авторизация в системе")
             st.markdown("Пожалуйста, войдите в систему для доступа к аналитическому дашборду.")
-            
+
             with st.form("login_form", clear_on_submit=False):
                 username = st.text_input("Логин", placeholder="Например: testuser")
                 password = st.text_input("Пароль", type="password", placeholder="Введите пароль")
                 submitted = st.form_submit_button("Войти", type="primary", use_container_width=True)
-                
+
                 if submitted:
                     if username and password:
                         success = api_client.login_user(username, password)
@@ -25,7 +26,7 @@ def require_auth(required_role: str = None):
                             st.rerun()
                     else:
                         st.warning("Введите логин и пароль")
-            
+
             st.stop()
 
         with st.sidebar:
@@ -37,11 +38,11 @@ def require_auth(required_role: str = None):
 
         if required_role:
             user_roles = st.session_state.get("roles", [])
-            
+
             required_level = ROLE_LEVELS.get(required_role, 99)
-            
+
             user_max_level = max([ROLE_LEVELS.get(role, 0) for role in user_roles], default=0)
-            
+
             if user_max_level < required_level:
                 st.error("**Доступ запрещён**")
                 st.info(

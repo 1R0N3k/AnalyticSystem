@@ -1,7 +1,6 @@
-import requests
-from typing import Optional
-import streamlit as st
 
+import requests
+import streamlit as st
 
 API_BASE_URL = "http://127.0.0.1:8000/analytics/api"
 AUTH_API_BASE_URL = "http://127.0.0.1:8000/api/auth"
@@ -33,20 +32,20 @@ def logout_user():
     token = st.session_state.get("auth_token")
     if token:
         requests.post(f"{AUTH_API_BASE_URL}/logout/", headers={"Authorization": f"Token {token}"})
-    
+
     for key in ["auth_token", "username", "roles"]:
         if key in st.session_state:
             del st.session_state[key]
     st.rerun()
 
 @st.cache_data(ttl=600)
-def get_revenue(start_date: Optional[str] = None, end_date: Optional[str] = None) -> list[dict]:
+def get_revenue(start_date: str | None = None, end_date: str | None = None) -> list[dict]:
     params = {}
     if start_date:
         params['start'] = start_date
     if end_date:
         params['end'] = end_date
-    
+
     response = requests.get(f"{API_BASE_URL}/revenue/", params=params)
     response.raise_for_status()
     return response.json()
@@ -58,13 +57,13 @@ def get_top_products(limit: int = 10) -> list[dict]:
     return response.json()
 
 @st.cache_data(ttl=600)
-def get_average_check(start_date: Optional[str] = None, end_date: Optional[str] = None) -> dict:
+def get_average_check(start_date: str | None = None, end_date: str | None = None) -> dict:
     params = {}
     if start_date:
         params['start'] = start_date
     if end_date:
         params['end'] = end_date
-    
+
     response = requests.get(f"{API_BASE_URL}/average-check/", params=params)
     response.raise_for_status()
     return response.json()
@@ -77,7 +76,7 @@ def get_customers_by_city() -> list[dict]:
 
 
 @st.cache_data(ttl=600)
-def get_margin(start_date: Optional[str] = None, end_date: Optional[str] = None) -> dict:
+def get_margin(start_date: str | None = None, end_date: str | None = None) -> dict:
     params = {}
     if start_date:
         params['start'] = start_date
@@ -85,7 +84,7 @@ def get_margin(start_date: Optional[str] = None, end_date: Optional[str] = None)
         params['end'] = end_date
 
     response = requests.get(f"{API_BASE_URL}/margin/", params=params, headers=get_auth_headers())
-    
+
     if response.status_code == 401:
         st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
@@ -100,7 +99,7 @@ def get_margin(start_date: Optional[str] = None, end_date: Optional[str] = None)
 
 
 @st.cache_data(ttl=600)
-def get_margin_by_day(start_date: Optional[str] = None, end_date: Optional[str] = None) -> list[dict]:
+def get_margin_by_day(start_date: str | None = None, end_date: str | None = None) -> list[dict]:
     params = {}
     if start_date:
         params['start'] = start_date
@@ -108,7 +107,7 @@ def get_margin_by_day(start_date: Optional[str] = None, end_date: Optional[str] 
         params['end'] = end_date
 
     response = requests.get(f"{API_BASE_URL}/margin-by-day/", params=params, headers=get_auth_headers())
-    
+
     if response.status_code == 401:
         st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
@@ -124,7 +123,7 @@ def get_margin_by_day(start_date: Optional[str] = None, end_date: Optional[str] 
 @st.cache_data(ttl=600)
 def get_abc_analysis() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/abc-analysis/", headers=get_auth_headers())
-    
+
     if response.status_code == 401:
         st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()
@@ -147,7 +146,7 @@ def get_funnel_data() -> list[dict]:
 @st.cache_data(ttl=600)
 def get_revenue_by_day_of_week() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-day-of-week/", headers=get_auth_headers())
-    
+
     if response.status_code == 401:
         st.error("Сессия истекла. Пожалуйста, войдите снова.")
         logout_user()

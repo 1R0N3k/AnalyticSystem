@@ -1,14 +1,14 @@
-import streamlit as st
-import plotly.express as px
-import pandas as pd
-import sys
 import os
+import sys
 from datetime import date, timedelta
+
+import pandas as pd
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
-
 
 st.set_page_config(
     page_title="Финансы и Маржинальность",
@@ -59,16 +59,16 @@ with st.spinner("Загрузка данных из API..."):
     try:
         summary = load_margin_summary_data(start_date.isoformat(), end_date.isoformat())
         daily_data = load_margin_by_day_data(start_date.isoformat(), end_date.isoformat())
-        
+
         if not summary or not daily_data:
             st.warning("Нет данных за выбранный период или доступ ограничен.")
             st.stop()
-        
+
         df_daily = pd.DataFrame(daily_data)
-        
+
         avg_daily_revenue = summary['total_revenue'] / len(df_daily) if len(df_daily) > 0 else 0
         best_day = df_daily.loc[df_daily['revenue'].idxmax()]
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()

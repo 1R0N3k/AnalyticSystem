@@ -1,9 +1,10 @@
-import streamlit as st
-import plotly.express as px
-import pandas as pd
-import sys
 import os
+import sys
+
+import pandas as pd
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
@@ -50,18 +51,18 @@ with st.container(
 with st.spinner("Загрузка данных из API..."):
     try:
         customers_data = load_top_customers_data(int(limit))
-        
+
         if not customers_data:
             st.warning("Нет данных о клиентах или доступ ограничен.")
             st.stop()
-        
+
         df = pd.DataFrame(customers_data)
-        
+
         total_top_revenue = df['total_spent'].sum()
         total_top_orders = df['order_count'].sum()
         avg_client_spent = total_top_revenue / len(df) if len(df) > 0 else 0
         avg_order_value = total_top_revenue / total_top_orders if total_top_orders > 0 else 0
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()
@@ -83,15 +84,12 @@ with st.container(border=True):
         st.metric("📊 Средний чек заказа", f"{avg_order_value:,.0f} ₽")
 
 
-if len(df) > 20:
-    chart_height = 800
-else:
-    chart_height = len(df) * 40 + 200
+chart_height = 800 if len(df) > 20 else len(df) * 40 + 200
 
 
 with st.container(border=True):
     st.subheader(f"Топ-{limit} клиентов по сумме покупок")
-    
+
     fig = px.bar(
         df,
         y='full_name',

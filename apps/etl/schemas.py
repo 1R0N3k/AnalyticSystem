@@ -1,7 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Literal
-from pydantic import BaseModel, Field, EmailStr
+
+from pydantic import BaseModel, EmailStr, Field
 
 
 class RawOrderItem(BaseModel):

@@ -1,13 +1,13 @@
-import streamlit as st
-import plotly.express as px
-import pandas as pd
-import sys
 import os
+import sys
+
+import pandas as pd
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
-
 
 auth_guard.require_auth(required_role='analyst')
 st.set_page_config(
@@ -33,8 +33,8 @@ with st.container(vertical_alignment="center"):
             st.rerun()
 
 st.markdown("""
-Показывает, как заказы переходят между статусами. 
-*Примечание: из-за особенностей генерации тестовых данных, абсолютное количество 'paid' может превышать 'new'. 
+Показывает, как заказы переходят между статусами.
+*Примечание: из-за особенностей генерации тестовых данных, абсолютное количество 'paid' может превышать 'new'.
 В реальной системе воронка всегда сужается сверху вниз.*
 """)
 
@@ -42,22 +42,22 @@ st.markdown("""
 with st.spinner("Загрузка данных из API..."):
     try:
         funnel_data = load_funnel_data()
-        
+
         if not funnel_data:
             st.warning("Нет данных для отображения или доступ ограничен.")
             st.stop()
-        
+
         df = pd.DataFrame(funnel_data)
         df = df.sort_values(by='count', ascending=False)
-        
+
         total_orders = df['count'].sum()
         new_count = df[df['status_key'] == 'new']['count'].sum() if 'new' in df['status_key'].values else 0
         delivered_count = df[df['status_key'] == 'delivered']['count'].sum() if 'delivered' in df['status_key'].values else 0
         cancelled_count = df[df['status_key'] == 'cancelled']['count'].sum() if 'cancelled' in df['status_key'].values else 0
-        
+
         conversion_rate = (delivered_count / new_count * 100) if new_count > 0 else 0
         cancellation_rate = (cancelled_count / total_orders * 100) if total_orders > 0 else 0
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()
@@ -87,19 +87,19 @@ with st.container(border=True):
         y='status_name',
         color='status_key',
         color_discrete_map={
-            'new': '#636EFA',      
-            'paid': '#00CC96',     
+            'new': '#636EFA',
+            'paid': '#00CC96',
             'delivered': '#AB63FA',
-            'cancelled': '#EF553B' 
+            'cancelled': '#EF553B'
         },
         labels={'count': 'Количество заказов', 'status_name': 'Этап'}
     )
-    
+
     fig.update_traces(
         textinfo="value+percent initial",
         hovertemplate="<b>%{y}</b><br>Заказов: %{x}<br>Доля: %{text}<extra></extra>"
     )
-    
+
     st.plotly_chart(fig)
 
 

@@ -1,8 +1,9 @@
-from datetime import date, timedelta
-from django.db.models import Sum, Count, Avg, Max, Value, F, Window
-from django.db.models.functions import ExtractHour, ExtractWeekDay, TruncDay, TruncMonth, RowNumber, Concat
-from orders.models import Order, OrderItem
+from datetime import date
+
 from customers.models import Customer
+from django.db.models import Avg, Count, F, Max, Sum, Value
+from django.db.models.functions import Concat, ExtractHour, ExtractWeekDay, TruncDay, TruncMonth
+from orders.models import Order, OrderItem
 
 
 def get_revenue_by_period(start_date: date, end_date: date):
@@ -24,7 +25,7 @@ def _get_products_revenue_base_queryset():
     ).annotate(
         total_revenue=Sum(F('price') * F('quantity')),
         total_quantity=Sum('quantity')
-    ).order_by('-total_revenue') 
+    ).order_by('-total_revenue')
 
 def get_top_products(limit: int = 10):
     return _get_products_revenue_base_queryset()[:limit]
@@ -57,8 +58,8 @@ def get_margin_summary(start_date: date, end_date: date):
         total_revenue=Sum(F('price') * F('quantity')),
         total_cost=Sum(F('cost') * F('quantity')),
     )
-   
-def get_margin_by_day(start_date: date, end_date: date) -> list[MarginDataPoint]:
+
+def get_margin_by_day(start_date: date, end_date: date):
     return OrderItem.objects.filter(
         order__created_at__date__range=[start_date, end_date],
         order__status__in=['paid', 'delivered']

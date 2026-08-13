@@ -1,7 +1,9 @@
-from datetime import date, datetime, timedelta
+from datetime import date
+
+from orders.models import Order
+
 from . import queries
-from .schemas import MarginDataPoint, MarginSummary, ABCProduct, FunnelStage, TimeDataPoint, TopCustomer
-from orders.models import Order, OrderItem
+from .schemas import ABCProduct, FunnelStage, MarginDataPoint, MarginSummary, TimeDataPoint, TopCustomer
 
 
 def get_revenue_data(start_date: date, end_date: date) -> list[dict]:
@@ -60,10 +62,10 @@ def get_margin_summary(start_date: date, end_date: date) -> MarginSummary:
 
     total_revenue = float(qs['total_revenue'] or 0)
     total_cost = float(qs['total_cost'] or 0)
-    
+
     total_margin = total_revenue - total_cost
     margin_percent = (total_margin / total_revenue * 100) if total_revenue > 0 else 0
-    
+
     return MarginSummary(
         total_revenue=total_revenue,
         total_cost=total_cost,
@@ -117,27 +119,23 @@ def get_funnel_data() -> list[FunnelStage]:
 
     status_counts = {item['status']: item['count'] for item in qs}
     stages_order = ['new', 'paid', 'delivered', 'cancelled']
-    total_new = status_counts.get('new', 0)
-    
+
     result = []
     for stage_key in stages_order:
         count = status_counts.get(stage_key, 0)
-        
+
         status_name = dict(Order.Status.choices).get(stage_key, stage_key.capitalize())
-        
+
         total_all_orders = sum(status_counts.values())
-        if total_all_orders > 0:
-            conversion_rate = (count / total_all_orders) * 100
-        else:
-            conversion_rate = 0.0
-            
+        conversion_rate = count / total_all_orders * 100 if total_all_orders > 0 else 0.0
+
         result.append(FunnelStage(
             status_key=stage_key,
             status_name=status_name,
             count=count,
             conversion_rate=round(conversion_rate, 2)
         ))
-        
+
     return result
 
 
@@ -152,7 +150,7 @@ def get_revenue_by_day_of_week() -> list[TimeDataPoint]:
         6: 'Пятница',
         7: 'Суббота'
     }
-    
+
     result = []
     for item in qs:
         day_num = item['day_of_week']
@@ -161,16 +159,16 @@ def get_revenue_by_day_of_week() -> list[TimeDataPoint]:
             revenue=float(item['revenue'] or 0),
             order_count=item['order_count'] or 0
         ))
-    
+
     order = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
     result.sort(key=lambda x: order.index(x.period) if x.period in order else 999)
-    
+
     return result
 
 
 def get_revenue_by_hour() -> list[TimeDataPoint]:
     qs = queries.get_revenue_by_hour()
-    
+
     result = []
     for item in qs:
         hour = item['hour']
@@ -181,44 +179,44 @@ def get_revenue_by_hour() -> list[TimeDataPoint]:
         ))
 
     result.sort(key=lambda x: int(x.period.split(':')[0]))
-    
+
     return result
 
 
 def get_revenue_by_month() -> list[TimeDataPoint]:
     qs = queries.get_revenue_by_month()
-    
+
     month_names = {
         1: 'Январь', 2: 'Февраль', 3: 'Март', 4: 'Апрель',
         5: 'Май', 6: 'Июнь', 7: 'Июль', 8: 'Август',
         9: 'Сентябрь', 10: 'Октябрь', 11: 'Ноябрь', 12: 'Декабрь'
     }
-    
+
     result = []
     for item in qs:
-        month_date = item['month'] 
+        month_date = item['month']
         month_num = month_date.month
         year = month_date.year
-        
+
         result.append(TimeDataPoint(
             period=f'{month_names.get(month_num, "")} {year}',
             revenue=float(item['revenue'] or 0),
             order_count=item['order_count'] or 0
         ))
-    
-    result.sort(key=lambda x: next((item['month'] for item in qs 
+
+    result.sort(key=lambda x: next((item['month'] for item in qs
                                     if f'{month_names.get(item["month"].month, "")} {item["month"].year}' == x.period), None))
-    
+
     return result
 
 
 def get_top_customers_data(limit: int = 100) -> list[TopCustomer]:
     qs = queries.get_top_customers(limit)
-    
+
     result = []
     for item in qs:
         last_date = item.last_order_date.date() if item.last_order_date else None
-        
+
         result.append(TopCustomer(
             full_name=item.full_name,
             email=item.email,
@@ -227,5 +225,5 @@ def get_top_customers_data(limit: int = 100) -> list[TopCustomer]:
             order_count=item.order_count or 0,
             last_order_date=last_date
         ))
-    
+
     return result

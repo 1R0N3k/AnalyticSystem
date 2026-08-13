@@ -61,7 +61,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["apps", "config", "dashboard"]
-known-third-party = ["django", "streamlit", "plotly", "pandas", "requests"]
+known-third-party = ["django", "streamlit", "plotly", "pandas", "requests", "streamlit_autorefresh"]
 section-order = [
     "future",
     "standard-library",
@@ -75,3 +75,12 @@ section-order = [
 "apps/*/admin.py" = ["F401"]
 "apps/*/apps.py" = ["F401"]
 "__init__.py" = ["F401"]
+"dashboard/**/*.py" = [
+    "E501",
+]
+"dashboard/pages/*.py" = [
+    "F401",
+]
+"dashboard/app.py" = [
+    "E402",
+]

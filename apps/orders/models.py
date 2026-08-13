@@ -8,7 +8,7 @@ class Order(models.Model):
         PAID = 'paid', 'Оплачен'
         DELIVERED = 'delivered', 'Доставлен'
         CANCELLED = 'cancelled', 'Отменён'
-    
+
     customer = models.ForeignKey(
         'customers.Customer',
         on_delete=models.PROTECT,
@@ -22,8 +22,8 @@ class Order(models.Model):
         db_index=True
     )
     due = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
+        max_digits=10,
+        decimal_places=2,
         help_text='Сумма к оплате'
     )
 
@@ -38,7 +38,7 @@ class Order(models.Model):
     def __str__(self):
         return f"Заказ #{self.id} от {self.created_at.strftime('%d.%m.%Y')} | {self.get_status_display()} | {self.due}₽"
 
-    
+
 class OrderItem(models.Model):
     order = models.ForeignKey(
         Order,
@@ -58,13 +58,13 @@ class OrderItem(models.Model):
     )
     cost = models.DecimalField(
         max_digits=10,
-        decimal_places=2, 
+        decimal_places=2,
         help_text='Себестоимость на момент покупки'
     )
 
     class Meta:
         verbose_name = 'Позиция заказа'
         verbose_name_plural = 'Позиции заказов'
-    
+
     def __str__(self):
         return f"{self.product.name} x{self.quantity} = {self.price * self.quantity}₽"

@@ -1,8 +1,9 @@
-import streamlit as st
-import plotly.express as px
-import sys
 import os
+import sys
+
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
@@ -34,9 +35,9 @@ if "layout_horizontal" not in st.session_state:
     st.session_state.layout_horizontal = False
 
 with st.container(
-        border=True, 
+        border=True,
         horizontal_alignment="right",
-        vertical_alignment="center",        
+        vertical_alignment="center",
     ):
     col_slider, col_layout = st.columns([6, 1], gap="small")
 
@@ -46,28 +47,28 @@ with st.container(
             min_value=5,
             max_value=50,
             value=10,
-            step=5          
+            step=5
         )
 
     with col_layout:
         st.markdown("<br>", unsafe_allow_html=True)
         st.session_state.layout_horizontal = st.toggle(
             "Блочное расположение",
-            value=st.session_state.layout_horizontal            
+            value=st.session_state.layout_horizontal
         )
 
 with st.spinner("Загрузка данных из API..."):
     try:
         products_data = load_products_data(int(limit))
-        
+
         if not products_data:
             st.warning("Нет данных о товарах или доступ ограничен.")
             st.stop()
-        
+
         total_revenue = sum(item['total_revenue'] for item in products_data)
         total_quantity = sum(item['total_quantity'] for item in products_data)
         avg_price = total_revenue / total_quantity if total_quantity > 0 else 0
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()
@@ -124,19 +125,17 @@ fig_quantity.update_traces(texttemplate='%{text} шт.', textposition='outside')
 
 if st.session_state.layout_horizontal:
     col_left, col_right = st.columns(2)
-    with col_left:
-        with st.container(border=True):
-            st.subheader("По выручке")
-            st.plotly_chart(fig_revenue)
-    with col_right:
-        with st.container(border=True):
-            st.subheader("По количеству")
-            st.plotly_chart(fig_quantity)
+    with col_left, st.container(border=True):
+        st.subheader("По выручке")
+        st.plotly_chart(fig_revenue)
+    with col_right, st.container(border=True):
+        st.subheader("По количеству")
+        st.plotly_chart(fig_quantity)
 else:
     with st.container(border=True):
         st.subheader("Топ товаров по выручке")
         st.plotly_chart(fig_revenue)
-    
+
     with st.container(border=True):
         st.subheader("Топ товаров по количеству продаж")
         st.plotly_chart(fig_quantity)
@@ -145,7 +144,7 @@ else:
 with st.expander("Детализация"):
     st.dataframe(
         products_data,
-        
+
         hide_index=True,
         column_config={
             "product_name": st.column_config.TextColumn("Товар", width="large"),

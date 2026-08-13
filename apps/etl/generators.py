@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timezone
+from datetime import UTC
 from decimal import Decimal
 
 from faker import Faker
@@ -47,10 +47,10 @@ PRODUCT_CATALOG = {
 }
 
 STATUS_WEIGHTS = {
-    'new': 0.10,        
-    'paid': 0.45,       
-    'delivered': 0.35,  
-    'cancelled': 0.10,  
+    'new': 0.10,
+    'paid': 0.45,
+    'delivered': 0.35,
+    'cancelled': 0.10,
 }
 
 CITIES = [
@@ -69,13 +69,13 @@ def _generate_order_items(count: int) -> list[RawOrderItem]:
     items = []
     for _ in range(count):
         category_name = random.choice(list(PRODUCT_CATALOG.keys()))
-        
+
         product_name, min_price, max_price = random.choice(PRODUCT_CATALOG[category_name])
 
         price = _generate_random_price(min_price, max_price)
         margin_percent = random.uniform(0.4, 0.7)
         cost = Decimal(str(round(float(price) * margin_percent, 2)))
-        
+
         items.append(RawOrderItem(
             name=product_name,
             category=category_name,
@@ -83,26 +83,26 @@ def _generate_order_items(count: int) -> list[RawOrderItem]:
             price=price,
             cost=cost,
         ))
-    
+
     return items
 
 
 def generate_mock_orders(count: int = 1000) -> list[RawOrder]:
     orders = []
-    
+
     statuses = list(STATUS_WEIGHTS.keys())
     weights = list(STATUS_WEIGHTS.values())
-    
+
     for _ in range(count):
-        created_at = fake.date_time_between(start_date='-1y', end_date='now', tzinfo=timezone.utc)
+        created_at = fake.date_time_between(start_date='-1y', end_date='now', tzinfo=UTC)
 
         items_count = random.randint(1, 5)
         items_list = _generate_order_items(items_count)
-        
+
         city = random.choice(CITIES)
-        
+
         status = random.choices(statuses, weights=weights, k=1)[0]
-        
+
         order = RawOrder(
             client_name=fake.first_name(),
             client_surname=fake.last_name(),
@@ -113,5 +113,5 @@ def generate_mock_orders(count: int = 1000) -> list[RawOrder]:
             status=status,
         )
         orders.append(order)
-    
+
     return orders

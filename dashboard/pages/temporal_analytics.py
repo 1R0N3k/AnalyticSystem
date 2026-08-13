@@ -1,13 +1,13 @@
-import streamlit as st
-import plotly.express as px
-import pandas as pd
-import sys
 import os
+import sys
+
+import pandas as pd
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
-
 
 auth_guard.require_auth(required_role='manager')
 st.set_page_config(
@@ -48,21 +48,21 @@ with st.spinner("Загрузка данных из API..."):
         days_data = load_revenue_by_day_of_week_data()
         hours_data = load_revenue_by_hours_data()
         months_data = load_revenue_by_month()
-        
+
         if not days_data or not hours_data or not months_data:
             st.warning("Нет данных для отображения или доступ ограничен.")
             st.stop()
-        
+
         df_days = pd.DataFrame(days_data)
         df_hours = pd.DataFrame(hours_data)
         df_months = pd.DataFrame(months_data)
-        
+
         total_revenue = df_months['revenue'].sum()
         total_orders = df_months['order_count'].sum()
-        
+
         best_day = df_days.loc[df_days['revenue'].idxmax()]
         best_hour = df_hours.loc[df_hours['revenue'].idxmax()]
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()
@@ -90,14 +90,14 @@ with tab1:
     with st.container(border=True):
         st.subheader("Выручка по дням недели")
         fig_days = px.bar(
-            df_days, x='period', y='revenue', 
+            df_days, x='period', y='revenue',
             color='revenue',
             labels={'period': 'День недели', 'revenue': 'Выручка (₽)'},
             text='order_count'
         )
         fig_days.update_traces(texttemplate='%{text} зак.', textposition='outside')
         st.plotly_chart(fig_days)
-    
+
     with st.expander("Детализация по дням недели"):
         st.dataframe(
             df_days,
@@ -112,21 +112,21 @@ with tab1:
 with tab2:
     with st.container(border=True):
         st.subheader("Выручка по часам суток")
-        
+
         fig_hours = px.line(
-            df_hours, 
-            x='period', 
+            df_hours,
+            x='period',
             y='revenue',
             line_shape='spline',
             labels={'period': 'Час', 'revenue': 'Выручка (₽)'},
             color_discrete_sequence=['#2ca02c']
         )
-        
+
         fig_hours.update_traces(
             hovertemplate="<b>%{x}</b><br>Выручка: %{y:,.0f} ₽<br>Заказов: %{customdata[0]}<extra></extra>",
             customdata=df_hours[['order_count']].values
         )
-        
+
         fig_hours.update_layout(
             xaxis_title="Время",
             yaxis_title="Выручка (₽)",
@@ -136,9 +136,9 @@ with tab2:
                 dtick=2
             )
         )
-        
+
         st.plotly_chart(fig_hours)
-    
+
     with st.expander("Детализация по часам"):
         st.dataframe(
             df_hours,
@@ -155,12 +155,12 @@ with tab3:
         st.subheader("Динамика выручки по месяцам")
         fig_months = px.area(
             df_months, x='period', y='revenue',
-            color='revenue', 
+            color='revenue',
             labels={'period': 'Месяц', 'revenue': 'Выручка (₽)'},
             hover_data={'order_count': True}
         )
         st.plotly_chart(fig_months)
-    
+
     with st.expander("Детализация по месяцам"):
         st.dataframe(
             df_months,

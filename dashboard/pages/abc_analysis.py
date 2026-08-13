@@ -1,9 +1,10 @@
-import streamlit as st
-import plotly.express as px
-import pandas as pd
-import sys
 import os
+import sys
+
+import pandas as pd
+import plotly.express as px
 import requests
+import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from services import api_client, auth_guard
@@ -43,27 +44,27 @@ with st.container(border=True):
 with st.spinner("Расчёт категорий..."):
     try:
         abc_data = load_abc_analysis_data()
-        
+
         if not abc_data:
             st.warning("Нет данных для анализа или доступ ограничен.")
             st.stop()
-        
+
         df = pd.DataFrame(abc_data)
         df_sorted = df.sort_values(by='revenue', ascending=False)
-        
+
         total_products = len(df)
         group_a = df[df['category'] == 'A']
         group_b = df[df['category'] == 'B']
         group_c = df[df['category'] == 'C']
-        
+
         count_a = len(group_a)
         count_b = len(group_b)
         count_c = len(group_c)
-        
+
         revenue_a = group_a['revenue'].sum()
         revenue_b = group_b['revenue'].sum()
         revenue_c = group_c['revenue'].sum()
-        
+
     except requests.exceptions.ConnectionError:
         st.error("Не удалось подключиться к Django API.")
         st.stop()
@@ -74,7 +75,7 @@ with st.spinner("Расчёт категорий..."):
 
 with st.container(border=True):
     st.subheader("Распределение товаров по группам")
-    
+
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric("**🟢 Группа A**", f"{count_a} товаров")
@@ -82,9 +83,9 @@ with st.container(border=True):
         st.metric("**🟡 Группа B**", f"{count_b} товаров")
     with col3:
         st.metric("**🔴 Группа C**", f"{count_c} товаров")
-    
+
     st.divider()
-    
+
     col4, col5, col6 = st.columns(3)
     with col4:
         st.metric("**Выручка**", f"{revenue_a:,.0f} ₽")
@@ -102,13 +103,13 @@ with st.container(border=True):
         values='revenue',
         color='category',
         color_discrete_map={
-            'A': '#00CC96',  
-            'B': '#FFA15A', 
-            'C': '#EF553B'  
+            'A': '#00CC96',
+            'B': '#FFA15A',
+            'C': '#EF553B'
         },
         custom_data=['cumulative_percent']
     )
-    
+
     fig.update_traces(
         texttemplate="<b>%{label}</b><br>%{value:,.0f} ₽",
         hovertemplate="<b>%{label}</b><br>Выручка: %{value:,.0f} ₽<br>Накопительный %: %{customdata[0]:.1f}%<extra></extra>"
