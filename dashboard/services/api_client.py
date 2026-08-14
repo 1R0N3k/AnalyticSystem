@@ -40,7 +40,7 @@ def logout_user():
             del st.session_state[key]
     st.rerun()
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_revenue(start_date: str | None = None, end_date: str | None = None) -> list[dict]:
     params = {}
     if start_date:
@@ -52,13 +52,13 @@ def get_revenue(start_date: str | None = None, end_date: str | None = None) -> l
     response.raise_for_status()
     return response.json() # type: ignore[no-any-return]
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_top_products(limit: int = 10) -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/top-products/", params={'limit': limit}, headers=get_auth_headers())
     response.raise_for_status()
     return response.json() # type: ignore[no-any-return]
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_average_check(start_date: str | None = None, end_date: str | None = None) -> dict:
     params = {}
     if start_date:
@@ -70,14 +70,14 @@ def get_average_check(start_date: str | None = None, end_date: str | None = None
     response.raise_for_status()
     return response.json() # type: ignore[no-any-return]
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_customers_by_city() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/customers-by-city/", headers=get_auth_headers())
     response.raise_for_status()
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_margin(start_date: str | None = None, end_date: str | None = None) -> dict:
     params = {}
     if start_date:
@@ -100,7 +100,7 @@ def get_margin(start_date: str | None = None, end_date: str | None = None) -> di
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_margin_by_day(start_date: str | None = None, end_date: str | None = None) -> list[dict]:
     params = {}
     if start_date:
@@ -122,7 +122,7 @@ def get_margin_by_day(start_date: str | None = None, end_date: str | None = None
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_abc_analysis() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/abc-analysis/", headers=get_auth_headers())
 
@@ -138,14 +138,14 @@ def get_abc_analysis() -> list[dict]:
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_funnel_data() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/funnel/", headers=get_auth_headers())
     response.raise_for_status()
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_revenue_by_day_of_week() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-day-of-week/", headers=get_auth_headers())
 
@@ -161,7 +161,7 @@ def get_revenue_by_day_of_week() -> list[dict]:
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_revenue_by_hour() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-hour/", headers=get_auth_headers())
 
@@ -177,7 +177,7 @@ def get_revenue_by_hour() -> list[dict]:
     return response.json() # type: ignore[no-any-return]
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_revenue_by_month() -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/revenue-by-months/", headers=get_auth_headers())
 
@@ -192,7 +192,7 @@ def get_revenue_by_month() -> list[dict]:
     response.raise_for_status()
     return response.json() # type: ignore[no-any-return]
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=60)
 def get_top_customers_data(limit: int = 100) -> list[dict]:
     response = requests.get(f"{API_BASE_URL}/top-customers/", params={'limit': limit}, headers=get_auth_headers())
 

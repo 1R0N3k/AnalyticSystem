@@ -8,6 +8,7 @@
 - **Менеджерские отчёты:** маржинальность, ABC-анализ (Парето 20/80), временная аналитика (дни недели / часы / месяцы), топ клиентов
 - **Интерфейс:** 8 страниц аналитики с интерактивными графиками Plotly, кнопка принудительного обновления данных, переключатель «Блочное расположение» (топ товаров, клиенты по городам)
 - **Данные:** ETL-конвейер генерации реалистичных тестовых заказов (Faker)
+- **Логирование:** вход/выход пользователей и API-запросы (метод, путь, статус, время, пользователь) в `logs/app.log` с ротацией 1 МБ × 3
 
 ## Скриншоты
 
@@ -60,7 +61,7 @@ Python 3.14 · Django 6 · PostgreSQL 16 · Streamlit · Plotly · pandas · pyd
 | `apps/customers/` | Модель `Customer` |
 | `apps/orders/` | Модели `Order`, `OrderItem` |
 | `apps/etl/` | Генераторы mock-данных, загрузчик, команда `run_etl` |
-| `config/` | Настройки Django (`settings.py`, `urls.py`, `asgi.py`, `wsgi.py`) |
+| `config/` | Настройки Django (`settings.py`, `urls.py`, `asgi.py`, `wsgi.py`), middleware логирования API-запросов |
 | `dashboard/` | Streamlit-приложение: `app.py`, `pages/`, `components/`, `services/` (auth_guard, api_client) |
 | `docker-compose.yaml` | Сервисы `db`, `django`, `dashboard` |
 
@@ -89,7 +90,7 @@ docker compose up --build
 docker compose exec analytic-system-api uv run python manage.py createsuperuser
 ```
 
-4. В админке создайте группы `analyst` и `manager` и добавьте суперпользователя в `manager` — иначе ему будут недоступны менеджерские отчёты (роли проверяются только через группы).
+4. В админке создайте группы `analyst` и `manager` и добавьте суперпользователя хотя бы в одну из них: без группы ему будет недоступен любой отчёт, с `analyst` — общие отчёты, с `manager` — все отчёты (роли проверяются только через группы).
 
 ### Локально
 
@@ -136,17 +137,17 @@ uv run streamlit run dashboard/app.py
 
 ## API
 
-Авторизация: заголовок `Authorization: Token <token>` (для защищённых эндпоинтов).
+Авторизация: все эндпоинты аналитики требуют заголовок `Authorization: Token <token>`. Роли иерархические: `manager` включает права `analyst`.
 
 | Метод | Путь | Доступ | Параметры |
 |---|---|---|---|
 | POST | `/api/auth/login/` | открытый | `username`, `password` → `{token, username, roles}` |
 | POST | `/api/auth/logout/` | по токену | — |
-| GET | `/analytics/api/revenue/` | открытый | `start`, `end` |
-| GET | `/analytics/api/top-products/` | открытый | `limit` |
-| GET | `/analytics/api/average-check/` | открытый | `start`, `end` |
-| GET | `/analytics/api/customers-by-city/` | открытый | — |
-| GET | `/analytics/api/funnel/` | открытый | — |
+| GET | `/analytics/api/revenue/` | analyst | `start`, `end` |
+| GET | `/analytics/api/top-products/` | analyst | `limit` |
+| GET | `/analytics/api/average-check/` | analyst | `start`, `end` |
+| GET | `/analytics/api/customers-by-city/` | analyst | — |
+| GET | `/analytics/api/funnel/` | analyst | — |
 | GET | `/analytics/api/margin/` | manager | `start`, `end` |
 | GET | `/analytics/api/margin-by-day/` | manager | `start`, `end` |
 | GET | `/analytics/api/abc-analysis/` | manager | — |
@@ -173,7 +174,7 @@ uv run python manage.py run_etl --rows 1000 --batch-size 500 --clear
 
 1. **Тестовые данные:** из-за весов генерации заказов в статусе `paid` может быть больше, чем `new`. В реальной системе воронка всегда сужается.
 2. **Производительность:** при очень большом количестве товаров (>10000) ABC-анализ может работать медленно. Рекомендуется пагинация или кэширование.
-3. **Streamlit кэширование:** данные кэшируются на 60 секунд (уровень страниц). Для принудительного обновления есть кнопка «Обновить данные».
+3. **Streamlit кэширование:** данные кэшируются на 60 секунд (`ttl=60` в `dashboard/services/api_client.py`). Для принудительного обновления есть кнопка «Обновить данные».
 
 ## Разработка
 
