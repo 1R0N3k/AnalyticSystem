@@ -259,3 +259,6 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+# Unused docs
+Document.md

@@ -26,4 +26,8 @@ Thumbs.db
 *.sqlite3
 db.sqlite3
 
+logs/
 *.log
+
+.git/
+docs/
