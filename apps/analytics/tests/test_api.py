@@ -95,11 +95,10 @@ class TestAuthentication:
         expected = 200 if url in ANALYST_ENDPOINTS else 403
         assert response.status_code == expected
 
-    def test_manager_token_access(self, client, manager_headers, sample_data, url):
+    def test_manager_token_has_hierarchical_access(self, client, manager_headers, sample_data, url):
         response = client.get(url, **manager_headers)
 
-        expected = 200 if url in MANAGER_ENDPOINTS else 403
-        assert response.status_code == expected
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db

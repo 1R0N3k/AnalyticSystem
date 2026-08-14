@@ -31,6 +31,12 @@ class TestTokenRequiredMixin:
 
         assert response.status_code == 200
 
+    def test_manager_can_access_analyst_endpoints(self, client, manager_user):
+        token = AuthToken.create_token(manager_user, hours=24)
+        response = client.get("/analytics/api/revenue/", HTTP_AUTHORIZATION=f"Token {token.token}")
+
+        assert response.status_code == 200
+
     def test_403_for_insufficient_role(self, client, analyst_user):
         token = AuthToken.create_token(analyst_user, hours=24)
         response = client.get("/analytics/api/margin/", HTTP_AUTHORIZATION=f"Token {token.token}")
