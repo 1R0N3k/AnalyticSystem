@@ -181,7 +181,7 @@ uv run python manage.py run_etl --rows 1000 --batch-size 500 --clear
 uv run ruff check .                    # линтер
 uv run ruff format --check .           # проверка форматирования
 uv run mypy .                          # проверка типов
-uv run python manage.py test           # тесты Django
+POSTGRES_HOST=localhost uv run pytest  # тесты (нужен PostgreSQL; в Docker-сети хост — db)
 ```
 
 ## Лицензия
