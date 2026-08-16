@@ -4,7 +4,7 @@
 
 ## Возможности
 
-- **Аналитика:** выручка по периодам, топ товаров, клиенты по городам, воронка конверсии
+- **Аналитика:** выручка по периодам, средний чек, топ товаров, клиенты по городам, воронка конверсии
 - **Менеджерские отчёты:** маржинальность, ABC-анализ (Парето 20/80), временная аналитика (дни недели / часы / месяцы), топ клиентов
 - **Интерфейс:** 8 страниц аналитики с интерактивными графиками Plotly, кнопка принудительного обновления данных, переключатель «Блочное расположение» (топ товаров, клиенты по городам)
 - **Данные:** ETL-конвейер генерации реалистичных тестовых заказов (Faker)
@@ -62,7 +62,7 @@ Python 3.14 · Django 6 · PostgreSQL 16 · Streamlit · Plotly · pandas · pyd
 | `apps/orders/` | Модели `Order`, `OrderItem` |
 | `apps/etl/` | Генераторы mock-данных, загрузчик, команда `run_etl` |
 | `config/` | Настройки Django (`settings.py`, `urls.py`, `asgi.py`, `wsgi.py`), middleware логирования API-запросов |
-| `dashboard/` | Streamlit-приложение: `app.py`, `pages/`, `components/`, `services/` (auth_guard, api_client) |
+| `dashboard/` | Streamlit-приложение: `app.py`, `pages/`, `services/` (auth_guard, api_client) |
 | `docker-compose.yaml` | Сервисы `db`, `django`, `dashboard` |
 
 ## Быстрый старт
@@ -115,7 +115,7 @@ uv run streamlit run dashboard/app.py
 
 Роли определяются группами Django (имена групп должны совпадать точно):
 
-- `analyst` — общие отчёты: выручка, топ товаров, клиенты по городам, воронка.
+- `analyst` — общие отчёты: выручка, средний чек, топ товаров, клиенты по городам, воронка.
 - `manager` — всё выше + маржинальность, ABC-анализ, временная аналитика, топ клиентов.
 
 ## Переменные окружения
@@ -130,10 +130,10 @@ uv run streamlit run dashboard/app.py
 | `DEBUG` | Django debug-режим | `0` |
 | `DJANGO_PORT` | Порт API на хосте | `8000` |
 | `ALLOWED_HOSTS` | Разрешённые хосты (через запятую) | `localhost,127.0.0.1` |
-| `API_BASE_URL` | Базовый URL API аналитики (для дашборда) | `http://django:8000/analytics/api` |
-| `AUTH_API_BASE_URL` | Базовый URL auth API (для дашборда) | `http://django:8000/api/auth` |
+| `API_BASE_URL` | Базовый URL API аналитики (для дашборда) | `http://localhost:8000/analytics/api` |
+| `AUTH_API_BASE_URL` | Базовый URL auth API (для дашборда) | `http://localhost:8000/api/auth` |
 
-В `.env.example` уже указан `POSTGRES_HOST=localhost` — подходит для локального запуска; в Docker-сети он передаётся в контейнер неявно через `db`-сервис.
+В `.env.example` уже указан `POSTGRES_HOST=localhost` — подходит для локального запуска; в Docker-сети он передаётся в контейнер неявно через `db`-сервис. В docker-compose `API_BASE_URL` и `AUTH_API_BASE_URL` переопределяются на `http://django:<DJANGO_PORT>/...`.
 
 ## API
 

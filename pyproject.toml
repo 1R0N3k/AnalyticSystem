@@ -63,7 +63,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["apps", "config", "dashboard"]
-known-third-party = ["django", "streamlit", "plotly", "pandas", "requests", "streamlit_autorefresh"]
+known-third-party = ["django", "streamlit", "plotly", "pandas", "requests"]
 section-order = [
     "future",
     "standard-library",
