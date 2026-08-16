@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 
-from . import api_client
+from .. import api_client
 
 ROLE_LEVELS = {
     'analyst': 1,

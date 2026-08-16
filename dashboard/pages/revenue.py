@@ -106,9 +106,9 @@ with st.container(border=True):
 with st.container(border=True):
     col1, col2 = st.columns(2)
     with col1:
-        st.info(f"📈 **Лучший день:** {best_day['day']} — выручка **{best_day['revenue']:,.2f} ₽**")
+        st.info(f"📈 **Лучший день:** {best_day['day'][:10]} — выручка **{best_day['revenue']:,.2f} ₽**")
     with col2:
-        st.error(f"📉 **Худший день:** {worst_day['day']} — выручка **{worst_day['revenue']:,.2f} ₽**")
+        st.error(f"📉 **Худший день:** {worst_day['day'][:10]} — выручка **{worst_day['revenue']:,.2f} ₽**")
 
 
 with st.container(border=True):

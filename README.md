@@ -15,8 +15,14 @@
 ### Главная страница дашборда
 ![Главная страница](docs/screenshots/dashboard_home.png)
 
+### Выручка по периодам
+![Выручка](docs/screenshots/revenue.png)
+
 ### Топ товаров по выручке
 ![Топ товаров](docs/screenshots/top_products.png)
+
+### Клиенты по городам
+![Клиенты по городам](docs/screenshots/clients_by_cities.png)
 
 ### Маржинальность
 ![Маржинальность](docs/screenshots/margin.png)
@@ -24,8 +30,14 @@
 ### ABC-анализ ассортимента
 ![ABC-анализ](docs/screenshots/abc_analysis.png)
 
+### Воронка конверсии
+![Воронка конверсии](docs/screenshots/funnel.png)
+
 ### Временная аналитика
 ![Временная аналитика](docs/screenshots/temporal.png)
+
+### Топ клиентов
+![Топ клиентов](docs/screenshots/top_clients.png)
 
 ## Архитектура
 
@@ -62,7 +74,7 @@ Python 3.14 · Django 6 · PostgreSQL 16 · Streamlit · Plotly · pandas · pyd
 | `apps/orders/` | Модели `Order`, `OrderItem` |
 | `apps/etl/` | Генераторы mock-данных, загрузчик, команда `run_etl` |
 | `config/` | Настройки Django (`settings.py`, `urls.py`, `asgi.py`, `wsgi.py`), middleware логирования API-запросов |
-| `dashboard/` | Streamlit-приложение: `app.py`, `pages/`, `services/` (auth_guard, api_client) |
+| `dashboard/` | Streamlit-приложение: `app.py`, `pages/`, `services/` (api_client; `components/` — `auth_guard.py`: форма входа и сообщения об ошибках авторизации/доступа) |
 | `docker-compose.yaml` | Сервисы `db`, `django`, `dashboard` |
 
 ## Быстрый старт
